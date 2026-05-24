@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content">
+  <meta name="theme-color" content="#6B5344">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Note">
+  <meta name="application-name" content="Note">
+  <title>Note</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png?v=1">
+  <link rel="apple-touch-icon" href="icons/icon-192.png?v=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;600&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=16">
+</head>
+<body>
+  <div class="sync-toast is-hidden" id="syncToast" role="status" aria-live="polite"></div>
+
+  <div class="app-shell">
+    <main>
+      <section class="screen is-active" data-screen="notes">
+        <header class="topbar" id="normalTopbar">
+          <div class="topbar__copy">
+            <h1>笔记</h1>
+          </div>
+          <button type="button" id="searchToggleBtn" class="icon-btn tap-scale" aria-label="搜索">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+          </button>
+        </header>
+
+        <header class="topbar multi-select-topbar is-hidden" id="multiSelectTopbar">
+          <button type="button" id="multiSelectCancelBtn" class="multi-select-topbar__cancel">取消</button>
+          <div class="multi-select-topbar__title" id="multiSelectTitle">已选择 0 项</div>
+          <button type="button" id="multiSelectAllBtn" class="multi-select-topbar__all">全选</button>
+        </header>
+
+        <div class="search-bar is-hidden" id="searchBar">
+          <input id="searchInput" type="search" placeholder="搜索标题或正文..." autocomplete="off" enterkeyhint="search">
+          <button type="button" id="searchClearBtn" class="search-bar__clear tap-scale" aria-label="清除搜索">×</button>
+        </div>
+
+        <div class="category-tabs" id="categoryTabs" role="tablist" aria-label="列表筛选"></div>
+
+        <div class="entry-list" id="entryList"></div>
+      </section>
+
+      <section class="screen" data-screen="settings">
+        <header class="topbar">
+          <div class="topbar__copy">
+            <p class="topbar__label">设置</p>
+            <h1>同步与外观</h1>
+          </div>
+        </header>
+
+        <section class="card">
+          <h2 class="card__title">云端同步</h2>
+          <p class="card__hint">使用独立的 Supabase 项目，与 Habit 无关。启用 Anonymous 登录后填入 URL 与 Anon Key。</p>
+          <label class="field">
+            <span>Project URL</span>
+            <input id="syncUrlInput" type="url" placeholder="https://xxxx.supabase.co" autocomplete="off">
+          </label>
+          <label class="field">
+            <span>Anon Key</span>
+            <input id="syncKeyInput" type="password" placeholder="eyJ..." autocomplete="off">
+          </label>
+          <div class="btn-row">
+            <button type="button" id="saveSyncBtn" class="btn-primary tap-scale">保存并连接</button>
+            <button type="button" id="syncNowBtn" class="btn-ghost tap-scale">立即同步</button>
+          </div>
+          <p class="sync-status" id="syncStatus">尚未配置云端</p>
+        </section>
+
+        <section class="card">
+          <h2 class="card__title">笔记本</h2>
+          <p class="card__hint">创建、重命名或删除笔记本，与笔记列表顶栏同步。</p>
+          <button type="button" id="manageCategoriesBtn" class="btn-ghost tap-scale">管理笔记本</button>
+        </section>
+
+        <section class="card appearance-card">
+          <h2 class="card__title">外观</h2>
+          <p class="card__hint">阅读配色与明暗模式，笔记内外同步生效。</p>
+          <div class="theme-mode" id="settingsThemeMode" role="group" aria-label="明暗模式">
+            <button type="button" class="theme-mode__btn tap-scale" data-theme-mode="light" aria-pressed="true">浅色</button>
+            <button type="button" class="theme-mode__btn tap-scale" data-theme-mode="dark" aria-pressed="false">深色</button>
+          </div>
+          <div class="skin-grid skin-grid--settings" id="settingsSkinGrid" aria-label="阅读配色"></div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <button type="button" id="fabAddBtn" class="fab tap-scale" aria-label="新建笔记">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+  </button>
+
+  <nav class="mobile-nav" aria-label="主导航">
+    <div class="mobile-nav__indicator" id="mobileNavIndicator"></div>
+    <button type="button" class="mobile-nav__item is-active" data-screen="notes" aria-label="笔记">
+      <svg class="mobile-nav__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg>
+      <span>笔记</span>
+    </button>
+    <button type="button" class="mobile-nav__item" data-screen="settings" aria-label="设置">
+      <svg class="mobile-nav__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <span>设置</span>
+    </button>
+  </nav>
+
+  <div id="editorSheet" class="editor-sheet is-hidden" aria-hidden="true">
+    <header class="editor-sheet__head">
+      <button type="button" id="editorBackBtn" class="icon-btn tap-scale" aria-label="返回">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+      <div class="editor-sheet__head-actions">
+        <button type="button" id="editorShareBtn" class="icon-btn tap-scale" aria-label="分享">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 3.9M15.4 6.6L8.6 10.5"/></svg>
+        </button>
+        <button type="button" id="editorMoreBtn" class="icon-btn tap-scale" aria-label="更多">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="5" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="19" r="1.5" fill="currentColor"/></svg>
+        </button>
+        <button type="button" id="editorDeleteBtn" class="icon-btn icon-btn--danger tap-scale" aria-label="删除">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="editor-find is-hidden" id="editorFindBar">
+      <input id="editorFindInput" type="search" placeholder="查找笔记内容…" enterkeyhint="search" autocomplete="off">
+      <button type="button" id="editorFindNextBtn" class="editor-find__btn tap-scale">下一个</button>
+      <button type="button" id="editorFindCloseBtn" class="editor-find__btn tap-scale" aria-label="关闭">×</button>
+    </div>
+
+    <div id="editorBody" class="editor-sheet__body" contenteditable="true" role="textbox" aria-multiline="true" spellcheck="true"></div>
+
+    <div class="editor-toolbar-wrap">
+    <div class="editor-toolbar" id="editorToolbar" role="toolbar" aria-label="编辑工具">
+      <div class="editor-toolbar__group">
+        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="undo" aria-label="撤销" disabled>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 7H5v4"/><path d="M5 11c1.5-3 4.5-5 8-5 4.4 0 8 3.6 8 8s-3.6 8-8 8a8 8 0 01-5.3-2"/></svg>
+        </button>
+        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="redo" aria-label="重做" disabled>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 7h4v4"/><path d="M19 11c-1.5-3-4.5-5-8-5-4.4 0-8 3.6-8 8s3.6 8 8 8a8 8 0 005.3-2"/></svg>
+        </button>
+      </div>
+      <span class="editor-toolbar__sep" aria-hidden="true"></span>
+      <div class="editor-toolbar__group">
+        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="done" aria-label="完成">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="timestamp" aria-label="插入时间">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+        </button>
+      </div>
+      <span class="editor-toolbar__sep" aria-hidden="true"></span>
+      <div class="editor-toolbar__group">
+        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="bullet" aria-label="无序列表">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4" cy="6" r="1" fill="currentColor"/><circle cx="4" cy="12" r="1" fill="currentColor"/><circle cx="4" cy="18" r="1" fill="currentColor"/></svg>
+        </button>
+        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="ordered" aria-label="有序列表">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10 6h10M10 12h10M10 18h10"/><path d="M4 6h1M4 12h1M4 18h1"/></svg>
+        </button>
+        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="checklist" aria-label="待办列表">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="6" height="6" rx="1"/><path d="M9 8h12M3 17h6M9 17h12"/><rect x="3" y="14" width="6" height="6" rx="1"/></svg>
+        </button>
+      </div>
+      <span class="editor-toolbar__sep" aria-hidden="true"></span>
+      <div class="editor-toolbar__group">
+        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="bold" aria-label="粗体"><strong>B</strong></button>
+        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="italic" aria-label="斜体"><em>I</em></button>
+        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="underline" aria-label="下划线"><u>U</u></button>
+        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="strike" aria-label="删除线"><s>S</s></button>
+        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="highlight" aria-label="高亮">高亮</button>
+      </div>
+      <span class="editor-toolbar__sep" aria-hidden="true"></span>
+      <div class="editor-toolbar__group">
+        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="h1" aria-label="一级标题">H1</button>
+        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="h2" aria-label="二级标题">H2</button>
+        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="quote" aria-label="引用">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 7h4v4H7zM13 7h4v4h-4z"/></svg>
+        </button>
+        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="hr" aria-label="分隔线">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 12h16"/></svg>
+        </button>
+      </div>
+      <span class="editor-toolbar__sep" aria-hidden="true"></span>
+      <div class="editor-toolbar__group">
+        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="indent" aria-label="增加缩进">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h16"/><path d="M18 10l2 2-2 2"/></svg>
+        </button>
+        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="outdent" aria-label="减少缩进">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h16"/><path d="M16 10l-2 2 2 2"/></svg>
+        </button>
+        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="selectAll" aria-label="全选">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 9h6v6H9z"/></svg>
+        </button>
+      </div>
+    </div>
+    </div>
+
+    <div class="action-sheet is-hidden" id="editorMoreSheet" aria-hidden="true">
+      <button type="button" class="action-sheet__backdrop" data-close="editorMoreSheet" aria-label="关闭"></button>
+      <div class="action-sheet__panel" role="dialog" aria-label="更多">
+        <button type="button" class="action-sheet__item tap-scale" data-action="find">查找</button>
+        <button type="button" class="action-sheet__item tap-scale" data-action="skin">皮肤</button>
+        <button type="button" class="action-sheet__item tap-scale" data-action="move">移动</button>
+        <button type="button" class="action-sheet__item tap-scale" data-action="app-settings">设置</button>
+      </div>
+    </div>
+
+    <div class="action-sheet is-hidden" id="editorShareSheet" aria-hidden="true">
+      <button type="button" class="action-sheet__backdrop" data-close="editorShareSheet" aria-label="关闭"></button>
+      <div class="action-sheet__panel" role="dialog" aria-label="分享笔记">
+        <h2 class="action-sheet__title">分享笔记</h2>
+        <button type="button" class="action-sheet__item tap-scale" data-share="text">以文字形式分享</button>
+        <button type="button" class="action-sheet__item tap-scale" data-share="image">以图片形式分享</button>
+        <button type="button" class="action-sheet__item tap-scale" data-share="link">以链接形式分享</button>
+        <button type="button" class="action-sheet__item tap-scale" data-share="word">以 Word 文档分享</button>
+        <button type="button" class="action-sheet__item action-sheet__item--cancel tap-scale" data-close="editorShareSheet">取消</button>
+      </div>
+    </div>
+
+    <div class="action-sheet is-hidden" id="editorSkinSheet" aria-hidden="true">
+      <button type="button" class="action-sheet__backdrop" data-close="editorSkinSheet" aria-label="关闭"></button>
+      <div class="action-sheet__panel action-sheet__panel--skin" role="dialog" aria-label="皮肤">
+        <header class="skin-sheet__head">
+          <button type="button" class="skin-sheet__done tap-scale" data-close="editorSkinSheet">完成</button>
+          <h2 class="skin-sheet__title">皮肤</h2>
+        </header>
+        <div class="skin-sheet__body">
+          <div class="theme-mode theme-mode--compact" id="editorThemeMode" role="group" aria-label="明暗模式">
+            <button type="button" class="theme-mode__btn tap-scale" data-theme-mode="light" aria-pressed="true">浅色</button>
+            <button type="button" class="theme-mode__btn tap-scale" data-theme-mode="dark" aria-pressed="false">深色</button>
+          </div>
+          <div class="skin-grid" id="editorSkinGrid" aria-label="阅读配色"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-sheet is-hidden" id="editorMoveSheet" aria-hidden="true">
+      <button type="button" class="action-sheet__backdrop" data-close="editorMoveSheet" aria-label="关闭"></button>
+      <div class="action-sheet__panel" role="dialog" aria-label="移动笔记">
+        <h2 class="action-sheet__title">移动到</h2>
+        <div class="action-sheet__list" id="editorMoveList"></div>
+        <button type="button" class="action-sheet__item action-sheet__item--cancel tap-scale" data-close="editorMoveSheet">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="action-sheet is-hidden" id="categoryManageSheet" aria-hidden="true">
+    <button type="button" class="action-sheet__backdrop" data-close="categoryManageSheet" aria-label="关闭"></button>
+    <div class="action-sheet__panel action-sheet__panel--manage" role="dialog" aria-label="管理笔记本">
+      <h2 class="action-sheet__title">管理笔记本</h2>
+      <form class="category-create" id="categoryCreateForm">
+        <input id="categoryNameInput" type="text" placeholder="新笔记本名称" maxlength="32" autocomplete="off" enterkeyhint="done">
+        <button type="submit" class="btn-primary tap-scale">添加</button>
+      </form>
+      <ul class="category-manage__list" id="categoryManageList"></ul>
+    </div>
+  </div>
+
+  <!-- 多选批量操作工具栏 -->
+  <div class="multi-select-actions is-hidden" id="multiSelectActionBar">
+    <button type="button" class="multi-select-actions__item tap-scale" id="batchMoveBtn">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+      </svg>
+      <span>移动</span>
+    </button>
+    <button type="button" class="multi-select-actions__item tap-scale" id="batchPinBtn">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <line x1="12" y1="17" x2="12" y2="22"></line>
+        <path d="M5 17h14v-1.76a2 2 0 0 0-.44-1.24l-2.12-2.58A2 2 0 0 1 16 10.18V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v5.18c0 .41-.12.82-.36 1.15L5.44 14a2 2 0 0 0-.44 1.24z"></path>
+      </svg>
+      <span id="batchPinText">置顶</span>
+    </button>
+    <button type="button" class="multi-select-actions__item multi-select-actions__item--danger tap-scale" id="batchDeleteBtn">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <polyline points="3 6 5 6 21 6"></polyline>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+        <line x1="10" y1="11" x2="10" y2="17"></line>
+        <line x1="14" y1="11" x2="14" y2="17"></line>
+      </svg>
+      <span>删除</span>
+    </button>
+  </div>
+
+  <!-- 批量移动笔记本 -->
+  <div class="action-sheet is-hidden" id="batchMoveSheet" aria-hidden="true">
+    <button type="button" class="action-sheet__backdrop" data-close="batchMoveSheet" aria-label="关闭"></button>
+    <div class="action-sheet__panel" role="dialog" aria-label="批量移动笔记">
+      <h2 class="action-sheet__title">批量移动到</h2>
+      <div class="action-sheet__list" id="batchMoveList"></div>
+      <button type="button" class="action-sheet__item action-sheet__item--cancel tap-scale" data-close="batchMoveSheet">取消</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script type="module" src="app.js?v=16"></script>
+</body>
+</html>

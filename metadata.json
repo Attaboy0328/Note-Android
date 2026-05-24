@@ -1,0 +1,6 @@
+{
+  "name": "Note",
+  "description": "极简文字记录 PWA：小说素材与心得体会。随时随地，离线记录小说灵感与读书感悟。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
