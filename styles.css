@@ -415,7 +415,11 @@ body.editor-open .app-shell {
   border-radius: 16px;
   background: var(--surface);
   box-shadow: var(--shadow);
-  touch-action: manipulation;
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
   transition:
     transform var(--duration-fast) var(--ease-out),
     box-shadow var(--duration-fast) var(--ease-out);
@@ -439,6 +443,10 @@ body.editor-open .app-shell {
 
 .entry-card__inner {
   padding: 14px 16px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
   transition: transform 0.18s ease, padding-right 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 

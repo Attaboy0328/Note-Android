@@ -986,7 +986,7 @@ function bindSwipe(card, entryId, inTrash) {
     const diffX = event.clientX - startX;
     const diffY = event.clientY - startY;
 
-    if (Math.abs(diffY) > 10 && !isScrolling) {
+    if (Math.abs(diffY) > 20 && !isScrolling) {
       isScrolling = true;
       card.classList.remove("is-touching"); // Cancel scale when scrolling vertically
       if (longPressTimer) {
@@ -997,7 +997,7 @@ function bindSwipe(card, entryId, inTrash) {
 
     if (isScrolling) return;
 
-    if (Math.abs(diffX) > 8) {
+    if (Math.abs(diffX) > 20) {
       card.classList.remove("is-touching"); // Cancel scale when scrolling/swiping horizontally
       if (longPressTimer) {
         clearTimeout(longPressTimer);
@@ -1035,7 +1035,7 @@ function bindSwipe(card, entryId, inTrash) {
       return;
     }
 
-    const tapped = Math.abs(event.clientX - startX) < 8 && Math.abs(event.clientY - startY) < 8 && !isScrolling;
+    const tapped = Math.abs(event.clientX - startX) < 15 && Math.abs(event.clientY - startY) < 15 && !isScrolling;
 
     if (tapped) {
       if (state.multiSelect?.active) {
@@ -1067,6 +1067,10 @@ function bindSwipe(card, entryId, inTrash) {
 
   inner.addEventListener("pointerup", finishGesture);
   inner.addEventListener("pointercancel", finishGesture);
+  inner.addEventListener("contextmenu", (event) => {
+    // Prevent default context menu on mobile/desktop during long press (keeps custom UI clean)
+    event.preventDefault();
+  });
 
   action?.addEventListener("click", (event) => {
     event.stopPropagation();
