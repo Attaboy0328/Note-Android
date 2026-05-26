@@ -9,6 +9,7 @@
     "build": "echo 'Build successfully skipped for static asset server'"
   },
   "dependencies": {
+    "dotenv": "^17.4.2",
     "express": "^4.21.2"
   }
 }

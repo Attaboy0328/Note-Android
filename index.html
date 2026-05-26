@@ -28,15 +28,28 @@
           <div class="topbar__copy">
             <h1>笔记</h1>
           </div>
-          <button type="button" id="searchToggleBtn" class="icon-btn tap-scale" aria-label="搜索">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
-          </button>
+          <div class="topbar__actions">
+            <button type="button" id="searchToggleBtn" class="icon-btn tap-scale" aria-label="搜索">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
+            </button>
+            <button type="button" id="moreMenuBtn" class="icon-btn tap-scale" aria-label="更多选项">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <circle cx="12" cy="5" r="1.5" fill="currentColor"/>
+                <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+                <circle cx="12" cy="19" r="1.5" fill="currentColor"/>
+              </svg>
+            </button>
+          </div>
         </header>
 
         <header class="topbar multi-select-topbar is-hidden" id="multiSelectTopbar">
-          <button type="button" id="multiSelectCancelBtn" class="multi-select-topbar__cancel">取消</button>
-          <div class="multi-select-topbar__title" id="multiSelectTitle">已选择 0 项</div>
-          <button type="button" id="multiSelectAllBtn" class="multi-select-topbar__all">全选</button>
+          <div class="multi-select-topbar__row">
+            <button type="button" id="multiSelectCancelBtn" class="multi-select-topbar__cancel">取消</button>
+            <button type="button" id="multiSelectAllBtn" class="multi-select-topbar__all">全选</button>
+          </div>
+          <div class="multi-select-topbar__title-wrapper">
+            <h1 class="multi-select-topbar__title" id="multiSelectTitle">已选择 0 项</h1>
+          </div>
         </header>
 
         <div class="search-bar is-hidden" id="searchBar">
@@ -259,6 +272,7 @@
         <button type="submit" class="btn-primary tap-scale">添加</button>
       </form>
       <ul class="category-manage__list" id="categoryManageList"></ul>
+      <button type="button" class="action-sheet__item action-sheet__item--cancel tap-scale" data-close="categoryManageSheet">完成</button>
     </div>
   </div>
 
@@ -295,6 +309,36 @@
       <h2 class="action-sheet__title">批量移动到</h2>
       <div class="action-sheet__list" id="batchMoveList"></div>
       <button type="button" class="action-sheet__item action-sheet__item--cancel tap-scale" data-close="batchMoveSheet">取消</button>
+    </div>
+  </div>
+
+  <!-- 右上角更多选项弹出排版菜单 -->
+  <div class="popover-menu is-hidden" id="moreMenuPopover">
+    <button type="button" class="popover-menu__backdrop" id="moreMenuBackdrop" aria-label="关闭菜单"></button>
+    <div class="popover-menu__panel">
+      <button type="button" class="popover-menu__item tap-scale" data-action="menu-edit">
+        <span>编辑</span>
+      </button>
+      
+      <button type="button" class="popover-menu__item tap-scale" data-action="menu-view-mode">
+        <span id="viewModeText">宫格模式</span>
+      </button>
+
+      <button type="button" class="popover-menu__item tap-scale" data-action="menu-settings">
+        <span>设置</span>
+      </button>
+
+      <div class="popover-menu__divider"></div>
+
+      <button type="button" class="popover-menu__item tap-scale" data-action="menu-sort-created">
+        <span>按创建时间排序</span>
+        <span class="popover-menu__checkmark" id="sortCreatedCheck">✓</span>
+      </button>
+
+      <button type="button" class="popover-menu__item tap-scale" data-action="menu-sort-modified">
+        <span>按修改时间排序</span>
+        <span class="popover-menu__checkmark" id="sortModifiedCheck">✓</span>
+      </button>
     </div>
   </div>
 

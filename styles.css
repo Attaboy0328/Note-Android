@@ -122,6 +122,32 @@ body.editor-open .app-shell {
   margin-bottom: 16px;
 }
 
+.topbar:not(.is-hidden) {
+  animation: fadeInSoft 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@keyframes fadeInSoft {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDownSoft {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .topbar__label {
   margin: 0 0 4px;
   font-size: 13px;
@@ -150,6 +176,10 @@ body.editor-open .app-shell {
     transform var(--duration-fast) var(--ease-spring),
     background-color var(--duration-fast) var(--ease-out),
     box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.icon-btn:active {
+  transform: scale(0.91);
 }
 
 .icon-btn--danger {
@@ -258,6 +288,18 @@ body.editor-open .app-shell {
     color var(--duration-fast) var(--ease-out);
 }
 
+.category-tab:active {
+  transform: scale(0.95);
+}
+
+@media (hover: hover) {
+  .category-tab:not(.is-active):hover {
+    background: var(--surface);
+    color: var(--text);
+    transform: scale(1.03);
+  }
+}
+
 .category-tab.is-active {
   background: var(--accent-soft);
   color: var(--accent);
@@ -310,7 +352,7 @@ body.editor-open .app-shell {
 .category-manage__list {
   list-style: none;
   margin: 0;
-  padding: 8px 0 max(12px, env(safe-area-inset-bottom));
+  padding: 8px 0 0;
 }
 
 .category-manage__empty {
@@ -639,7 +681,26 @@ body.editor-open .app-shell {
   transition:
     transform var(--duration-fast) var(--ease-spring),
     box-shadow var(--duration-fast) var(--ease-out),
-    opacity var(--duration-normal) var(--ease-out);
+    opacity var(--duration-normal) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+.fab svg {
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@media (hover: hover) {
+  .fab:hover {
+    transform: scale(1.08);
+    box-shadow: 0 16px 36px rgba(107, 83, 68, 0.38);
+  }
+  .fab:hover svg {
+    transform: rotate(90deg);
+  }
+}
+
+.fab:active {
+  transform: scale(0.9) !important;
 }
 
 .fab.is-hidden {
@@ -709,6 +770,10 @@ body[data-screen="settings"] .mobile-nav__indicator {
   transition:
     transform var(--duration-fast) var(--ease-spring),
     color var(--duration-fast) var(--ease-out);
+}
+
+.mobile-nav__item:active {
+  transform: scale(0.93);
 }
 
 .mobile-nav__item:focus:not(:focus-visible) {
@@ -909,12 +974,25 @@ body[data-screen="settings"] .mobile-nav__indicator {
   position: relative;
   user-select: none;
   -webkit-user-select: none;
+  transition: background-color 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.15s ease;
+}
+
+.editor-sheet__body .todo-check:active {
+  transform: scale(0.85);
 }
 
 .editor-sheet__body .todo-check::after {
-  content: "";
+  content: "✓";
   position: absolute;
-  inset: 0;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  color: #fff;
+  font-size: 13px;
+  line-height: 1;
+  text-align: center;
+  opacity: 0;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.12s ease;
 }
 
 .editor-sheet__body li[data-checked="true"] .todo-check {
@@ -923,11 +1001,8 @@ body[data-screen="settings"] .mobile-nav__indicator {
 }
 
 .editor-sheet__body li[data-checked="true"] .todo-check::after {
-  content: "✓";
-  color: #fff;
-  font-size: 14px;
-  line-height: 16px;
-  text-align: center;
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.1);
 }
 
 .editor-sheet__body li[data-checked="true"] {
@@ -1206,6 +1281,12 @@ body[data-screen="settings"] .mobile-nav__indicator {
   font-size: 16px;
   text-align: center;
   cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-out), transform 0.1s ease;
+}
+
+.action-sheet__item:active {
+  background-color: color-mix(in srgb, var(--text) 5%, transparent);
+  transform: scale(0.985);
 }
 
 .action-sheet__item:first-of-type {
@@ -1730,7 +1811,6 @@ html[data-skin="ink"][data-theme="dark"] {
 /* 置顶卡片特殊外观 */
 .entry-card.is-pinned {
   background: color-mix(in srgb, var(--accent) 3.5%, var(--surface)) !important;
-  border-left: 4px solid var(--accent);
 }
 
 .entry-card__pinned-badge {
@@ -1759,11 +1839,11 @@ html[data-skin="ink"][data-theme="dark"] {
   top: 50%;
   right: -40px; /* 默认隐藏在外面 */
   transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  border: 1.8px solid var(--line);
-  border-radius: 50%;
-  background: var(--surface);
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--line);
+  border-radius: 6px;
+  background: transparent;
   transition: right 0.28s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.2s, border-color 0.2s;
   display: flex;
   align-items: center;
@@ -1774,23 +1854,34 @@ html[data-skin="ink"][data-theme="dark"] {
 
 /* 选中状态 */
 .entry-card__checkbox.is-checked {
-  background-color: var(--accent);
-  border-color: var(--accent);
+  background-color: var(--accent) !important;
+  border-color: var(--accent) !important;
+  animation: pop-check 0.18s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 .entry-card__checkbox::after {
   content: "";
-  width: 4px;
-  height: 8px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 5px;
+  height: 9px;
   border: solid #fff;
-  border-width: 0 1.8px 1.8px 0;
-  transform: rotate(45deg) translate(-1px, -1px);
+  border-width: 0 2px 2px 0;
+  transform: translate(-50%, -60%) rotate(45deg) scale(0);
   opacity: 0;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .entry-card__checkbox.is-checked::after {
   opacity: 1;
+  transform: translate(-50%, -60%) rotate(45deg) scale(1.05);
+}
+
+@keyframes pop-check {
+  0% { transform: translateY(-50%) scale(1); }
+  50% { transform: translateY(-50%) scale(0.85); }
+  100% { transform: translateY(-50%) scale(1); }
 }
 
 /* 当多选模式激活时，卡片内容不再向左侧偏移（避免左侧截断），而是增加右侧 padding 留出 checkbox 空间 */
@@ -1819,18 +1910,39 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
 }
 
 .entry-card.is-touching {
-  transform: scale(0.975) !important;
+  transform: scale(0.97) !important;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+}
+
+@media (hover: hover) {
+  .entry-card:not(.is-touching):hover {
+    transform: scale(1.02) translateY(-2px);
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.08), var(--shadow);
+    z-index: 2;
+  }
 }
 
 /* 多选顶栏 */
 .multi-select-topbar {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  background: var(--background);
+  margin-bottom: 16px;
+}
+
+.multi-select-topbar:not(.is-hidden) {
+  animation: slideDownSoft 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.multi-select-topbar.is-hidden {
+  display: none !important;
+}
+
+.multi-select-topbar__row {
+  display: flex;
   justify-content: space-between;
-  background: var(--surface);
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
-  animation: slideDown 0.22s ease-out;
+  align-items: center;
+  width: 100%;
 }
 
 .multi-select-topbar__cancel,
@@ -1838,20 +1950,28 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
   border: 0;
   background: transparent;
   color: var(--accent);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 500;
-  padding: 8px 16px;
+  padding: 12px 16px;
   cursor: pointer;
+  transition: opacity 0.15s;
 }
 
 .multi-select-topbar__cancel {
   color: var(--muted);
 }
 
+.multi-select-topbar__title-wrapper {
+  padding: 4px 16px 12px 16px;
+}
+
 .multi-select-topbar__title {
-  font-size: 16px;
-  font-weight: 600;
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: var(--text);
+  text-align: left;
 }
 
 /* 底部操作栏 */
@@ -1919,3 +2039,262 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
   from { transform: translateY(100%) translateX(-50%); }
   to { transform: translateY(0) translateX(-50%); }
 }
+
+/* 顶部操作集合栏 */
+.topbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 弹出菜单样式 */
+.popover-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1200;
+}
+
+.popover-menu.is-hidden {
+  display: none !important;
+}
+
+.popover-menu__backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: default;
+}
+
+.popover-menu__panel {
+  position: absolute;
+  top: calc(var(--safe-top) + 64px);
+  right: 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  border-radius: 16px;
+  width: 200px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  z-index: 1210;
+  transform-origin: top right;
+  animation: popover-in 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  backdrop-filter: blur(20px);
+  background: color-mix(in srgb, var(--surface) 93%, transparent);
+}
+
+@keyframes popover-in {
+  from {
+    transform: scale(0.9) translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.popover-menu__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 11px 16px;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 14.5px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color var(--duration-fast) var(--ease-out), transform 0.1s ease;
+}
+
+.popover-menu__item:active {
+  background: color-mix(in srgb, var(--text) 8%, transparent);
+  transform: scale(0.97);
+}
+
+@media (hover: hover) {
+  .popover-menu__item:hover {
+    background: color-mix(in srgb, var(--text) 5%, transparent);
+  }
+}
+
+.popover-menu__icon {
+  display: none !important;
+}
+
+.popover-menu__checkmark {
+  color: var(--accent);
+  font-weight: bold;
+  font-size: 15px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.popover-menu__checkmark.is-hidden {
+  display: none !important;
+}
+
+.popover-menu__divider {
+  height: 1px;
+  background: var(--line);
+  margin: 6px 4px;
+}
+
+/* 宫格模式 */
+.entry-list.is-grid {
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 12px;
+}
+
+@media (min-width: 600px) {
+  .entry-list.is-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+/* 列表卡片内图片预览 */
+.entry-card__img-preview {
+  margin-top: 8px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+  overflow: hidden;
+  max-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--text) 3%, var(--surface));
+}
+
+.entry-card__img-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 笔记列表分组段落头部与分割线 */
+.entry-section-header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 4px 6px 4px;
+  margin-top: 4px;
+  user-select: none;
+}
+
+.entry-section-header--pinned {
+  cursor: pointer;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.entry-section-header--pinned:active {
+  opacity: 0.7;
+}
+
+@media (hover: hover) {
+  .entry-section-header--pinned:hover {
+    opacity: 0.8;
+  }
+}
+
+.entry-section-header--others {
+  padding-top: 22px;
+  margin-top: 6px;
+}
+
+.entry-section-header__title {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+}
+
+.entry-section-header__toggle {
+  background: none;
+  border: none;
+  padding: 4px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  pointer-events: none; /* 让外层的点击事件统一处理 */
+}
+
+.entry-section-header__chevron {
+  transition: transform var(--duration-normal) var(--ease-out);
+}
+
+.entry-section-header.is-expanded .entry-section-header__chevron {
+  transform: rotate(180deg);
+}
+
+.entry-section-header.is-collapsed .entry-section-header__chevron {
+  transform: rotate(0deg);
+}
+
+/* 一比一复原：列表布局下普通/置顶笔记的合并与分组视觉（OPPO便签样式） */
+.entry-list:not(.is-grid) {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.entry-list:not(.is-grid) .entry-card {
+  border-radius: 0;
+  margin-bottom: 0;
+  box-shadow: none;
+}
+
+/* 顶部卡片圆角 */
+.entry-list:not(.is-grid) .entry-card.is-first-in-group {
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+/* 底部卡片圆角 */
+.entry-list:not(.is-grid) .entry-card.is-last-in-group {
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+/* 单个卡片或两者皆是时的圆角 */
+.entry-list:not(.is-grid) .entry-card.is-first-in-group.is-last-in-group {
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+}
+
+/* 统一取消置顶笔记的硬左边栏，保持跟列表整体纯净完美对齐 */
+.entry-list:not(.is-grid) .entry-card.is-pinned {
+  border-left: none !important;
+}
+
+/* 绘制中间卡片的水平分割线，完美缩进16px，一比一还原OPPO质感 */
+.entry-list:not(.is-grid) .entry-card:not(.is-last-in-group)::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 16px;
+  right: 16px;
+  height: 1px;
+  background: var(--line);
+  opacity: 0.5;
+  z-index: 3;
+}
+

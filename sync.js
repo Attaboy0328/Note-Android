@@ -26,6 +26,23 @@ export function getSyncConfig() {
   return { ...syncConfig };
 }
 
+export async function initializeSyncConfigFromBackend() {
+  try {
+    const res = await fetch("/api/supabase-config");
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.url && data.anonKey) {
+      const current = getSyncConfig();
+      if (!current.url || !current.anonKey) {
+        saveSyncConfig(data);
+        console.log("Supabase configuration auto-loaded from environment variables.");
+      }
+    }
+  } catch (err) {
+    console.error("Failed to fetch server-side Supabase credentials:", err);
+  }
+}
+
 export function saveSyncConfig(next) {
   syncConfig = {
     url: String(next.url || "").trim(),

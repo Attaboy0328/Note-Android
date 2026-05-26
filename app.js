@@ -14,6 +14,7 @@ import {
   ensureSession,
   getLastSyncMeta,
   getSyncConfig,
+  initializeSyncConfigFromBackend,
   isSyncConfigured,
   pullRemote,
   pushCategory,
@@ -72,7 +73,10 @@ const ui = {
   saveSyncBtn: document.getElementById("saveSyncBtn"),
   syncNowBtn: document.getElementById("syncNowBtn"),
   syncStatus: document.getElementById("syncStatus"),
-  syncToast: document.getElementById("syncToast")
+  syncToast: document.getElementById("syncToast"),
+  moreMenuBtn: document.getElementById("moreMenuBtn"),
+  moreMenuPopover: document.getElementById("moreMenuPopover"),
+  moreMenuBackdrop: document.getElementById("moreMenuBackdrop")
 };
 
 const state = {
@@ -86,7 +90,8 @@ const state = {
   cloudSyncTimer: null,
   swipe: { activeId: null },
   suppressEditorPopstate: false,
-  multiSelect: { active: false, selectedIds: new Set() }
+  multiSelect: { active: false, selectedIds: new Set() },
+  pinnedCollapsed: false
 };
 
 let settings = loadSettings();
@@ -168,9 +173,11 @@ function loadSettings() {
     const parsed = raw ? JSON.parse(raw) : {};
     parsed.skin = normalizeSkinId(parsed.skin || "paper");
     if (typeof parsed.darkMode !== "boolean") parsed.darkMode = false;
+    if (!parsed.sortField) parsed.sortField = "updated_at";
+    if (!parsed.layoutMode) parsed.layoutMode = "list";
     return parsed;
   } catch {
-    return { darkMode: false, skin: "paper" };
+    return { darkMode: false, skin: "paper", sortField: "updated_at", layoutMode: "list" };
   }
 }
 
@@ -624,8 +631,8 @@ function filteredEntries() {
         const bPinned = Boolean(b.is_pinned);
         if (aPinned !== bPinned) return aPinned ? -1 : 1;
       }
-      const aTime = inTrash ? a.deleted_at : a.updated_at;
-      const bTime = inTrash ? b.deleted_at : b.updated_at;
+      const aTime = inTrash ? a.deleted_at : (settings.sortField === "created_at" ? (a.created_at || a.updated_at) : a.updated_at);
+      const bTime = inTrash ? b.deleted_at : (settings.sortField === "created_at" ? (b.created_at || b.updated_at) : b.updated_at);
       return new Date(bTime) - new Date(aTime);
     });
 }
@@ -698,6 +705,12 @@ function renderListFilters() {
 }
 
 function renderEntryList() {
+  if (settings.layoutMode === "grid") {
+    ui.entryList.classList.add("is-grid");
+  } else {
+    ui.entryList.classList.remove("is-grid");
+  }
+
   const entries = filteredEntries();
   const inTrash = state.listFilter === "trash";
   const categoryId = getActiveCategoryFilterId();
@@ -720,7 +733,12 @@ function renderEntryList() {
     return;
   }
 
-  entries.forEach((entry, index) => {
+  const pinnedEntries = (!inTrash) ? entries.filter(e => e.is_pinned) : [];
+  const otherEntries = (!inTrash) ? entries.filter(e => !e.is_pinned) : entries;
+
+  let overallIndex = 0;
+
+  function createCard(entry, index) {
     const card = document.createElement("article");
     card.className = "entry-card entry-card--animate tap-scale";
     card.style.animationDelay = `${Math.min(index, 12) * 40}ms`;
@@ -740,14 +758,18 @@ function renderEntryList() {
     const isSelected = state.multiSelect?.active && state.multiSelect.selectedIds.has(entry.id);
     if (isPinned) card.classList.add("is-pinned");
 
-    const pinnedBadgeHtml = isPinned ? `<span class="entry-card__pinned-badge">置顶</span>` : "";
     const checkedClass = isSelected ? "is-checked" : "";
+
+    const match = entry.body ? entry.body.match(/<img[^>]+src=["']([^"']+)["']/i) : null;
+    const firstImgSrc = match ? match[1] : null;
+    const imgHtml = firstImgSrc ? `<div class="entry-card__img-preview"><img src="${firstImgSrc}" alt="Note image" loading="lazy"></div>` : "";
 
     card.innerHTML = `
       <div class="entry-card__action" data-action="swipe">${inTrash ? "恢复" : "删除"}</div>
       <div class="entry-card__inner">
-        <h3 class="entry-card__title">${pinnedBadgeHtml}<span class="entry-card__title-text"></span></h3>
+        <h3 class="entry-card__title"><span class="entry-card__title-text"></span></h3>
         <p class="entry-card__preview"></p>
+        ${imgHtml}
         <div class="entry-card__meta">
           <span class="entry-card__tag${categoryName ? "" : " is-hidden"}"></span>
           <span class="entry-card__time"></span>
@@ -763,8 +785,59 @@ function renderEntryList() {
     card.querySelector(".entry-card__time").textContent = timeLabel;
 
     bindSwipe(card, entry.id, inTrash);
-    ui.entryList.appendChild(card);
-  });
+    return card;
+  }
+
+  // Render Pinned Section if exists
+  if (pinnedEntries.length > 0) {
+    const pinnedHeader = document.createElement("div");
+    pinnedHeader.className = "entry-section-header entry-section-header--pinned" + (state.pinnedCollapsed ? " is-collapsed" : " is-expanded");
+    pinnedHeader.innerHTML = `
+      <div class="entry-section-header__title">置顶</div>
+      <button type="button" class="entry-section-header__toggle" aria-label="展开或收起置顶">
+        <svg class="entry-section-header__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+    `;
+    pinnedHeader.addEventListener("click", () => {
+      state.pinnedCollapsed = !state.pinnedCollapsed;
+      renderEntryList();
+    });
+    ui.entryList.appendChild(pinnedHeader);
+
+    if (!state.pinnedCollapsed) {
+      pinnedEntries.forEach((entry, idx) => {
+        const card = createCard(entry, overallIndex++);
+        if (idx === 0) card.classList.add("is-first-in-group");
+        if (idx === pinnedEntries.length - 1) card.classList.add("is-last-in-group");
+        ui.entryList.appendChild(card);
+      });
+    }
+
+    // Render separator/Other section header if other notes exist
+    if (otherEntries.length > 0) {
+      const othersHeader = document.createElement("div");
+      othersHeader.className = "entry-section-header entry-section-header--others";
+      othersHeader.innerHTML = `<div class="entry-section-header__title">其他笔记</div>`;
+      ui.entryList.appendChild(othersHeader);
+
+      otherEntries.forEach((entry, idx) => {
+        const card = createCard(entry, overallIndex++);
+        if (idx === 0) card.classList.add("is-first-in-group");
+        if (idx === otherEntries.length - 1) card.classList.add("is-last-in-group");
+        ui.entryList.appendChild(card);
+      });
+    }
+  } else {
+    // Render flat list
+    otherEntries.forEach((entry, idx) => {
+      const card = createCard(entry, overallIndex++);
+      if (idx === 0) card.classList.add("is-first-in-group");
+      if (idx === otherEntries.length - 1) card.classList.add("is-last-in-group");
+      ui.entryList.appendChild(card);
+    });
+  }
 }
 
 function bindSwipe(card, entryId, inTrash) {
@@ -916,7 +989,6 @@ function enterMultiSelectMode(initialEntryId = null) {
   document.getElementById("multiSelectActionBar")?.classList.remove("is-hidden");
   ui.fabAddBtn?.classList.add("is-hidden");
   
-  renderEntryList();
   updateMultiSelectUI();
 }
 
@@ -935,7 +1007,7 @@ function exitMultiSelectMode() {
   const hideFab = state.activeScreen !== "notes" || state.listFilter === "trash";
   ui.fabAddBtn?.classList.toggle("is-hidden", hideFab);
   
-  renderEntryList();
+  updateMultiSelectUI();
 }
 
 function toggleEntrySelected(entryId) {
@@ -989,6 +1061,51 @@ function toggleSelectAll() {
     entries.forEach(e => state.multiSelect.selectedIds.add(e.id));
   }
   updateMultiSelectUI();
+}
+
+function updateMoreMenuUI() {
+  const viewModeByText = document.getElementById("viewModeText");
+  const viewModeByIcon = document.getElementById("viewModeIcon");
+  if (viewModeByText) {
+    viewModeByText.textContent = settings.layoutMode === "grid" ? "列表模式" : "宫格模式";
+  }
+  if (viewModeByIcon) {
+    if (settings.layoutMode === "grid") {
+      viewModeByIcon.innerHTML = `
+        <line x1="8" y1="6" x2="21" y2="6"></line>
+        <line x1="8" y1="12" x2="21" y2="12"></line>
+        <line x1="8" y1="18" x2="21" y2="18"></line>
+        <line x1="3" y1="6" x2="3.01" y2="6"></line>
+        <line x1="3" y1="12" x2="3.01" y2="12"></line>
+        <line x1="3" y1="18" x2="3.01" y2="18"></line>
+      `;
+    } else {
+      viewModeByIcon.innerHTML = `
+        <rect x="3" y="3" width="7" height="7"></rect>
+        <rect x="14" y="3" width="7" height="7"></rect>
+        <rect x="14" y="14" width="7" height="7"></rect>
+        <rect x="3" y="14" width="7" height="7"></rect>
+      `;
+    }
+  }
+
+  const sortCreatedCheck = document.getElementById("sortCreatedCheck");
+  const sortModifiedCheck = document.getElementById("sortModifiedCheck");
+  if (sortCreatedCheck) {
+    sortCreatedCheck.classList.toggle("is-hidden", settings.sortField !== "created_at");
+  }
+  if (sortModifiedCheck) {
+    sortModifiedCheck.classList.toggle("is-hidden", settings.sortField !== "updated_at");
+  }
+}
+
+function openMoreMenu() {
+  updateMoreMenuUI();
+  ui.moreMenuPopover?.classList.remove("is-hidden");
+}
+
+function closeMoreMenu() {
+  ui.moreMenuPopover?.classList.add("is-hidden");
 }
 
 function openBatchMoveSheet() {
@@ -1144,10 +1261,10 @@ async function closeEditor({ fromPopstate = false } = {}) {
   closeAllEditorSheets();
   hideFindBar();
   ui.editorSheet?.classList.remove("is-visible");
+  document.body.classList.remove("editor-open");
   window.setTimeout(() => {
     ui.editorSheet.classList.add("is-hidden");
     ui.editorSheet.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("editor-open");
     updateEditorDock();
   }, SHEET_CLOSE_MS);
 
@@ -1404,12 +1521,61 @@ function bindEvents() {
   });
 
   // 多选批量操作相关的事件处理
-  document.getElementById("multiSelectCancelBtn")?.addEventListener("click", exitMultiSelectMode);
+  document.getElementById("multiSelectCancelBtn")?.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    exitMultiSelectMode();
+  });
   document.getElementById("multiSelectAllBtn")?.addEventListener("click", toggleSelectAll);
   
   document.getElementById("batchMoveBtn")?.addEventListener("click", openBatchMoveSheet);
   document.getElementById("batchPinBtn")?.addEventListener("click", () => void executeBatchPin());
   document.getElementById("batchDeleteBtn")?.addEventListener("click", () => void executeBatchDelete());
+
+  // 更多排版与设置弹出菜单
+  ui.moreMenuBtn?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    if (ui.moreMenuPopover?.classList.contains("is-hidden")) {
+      openMoreMenu();
+    } else {
+      closeMoreMenu();
+    }
+  });
+
+  ui.moreMenuBackdrop?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeMoreMenu();
+  });
+
+  ui.moreMenuPopover?.addEventListener("click", (event) => {
+    const btn = event.target.closest(".popover-menu__item");
+    if (!btn) return;
+    event.stopPropagation();
+    
+    const action = btn.dataset.action;
+    if (action === "menu-edit") {
+      closeMoreMenu();
+      enterMultiSelectMode();
+    } else if (action === "menu-view-mode") {
+      settings.layoutMode = settings.layoutMode === "grid" ? "list" : "grid";
+      saveSettings();
+      renderEntryList();
+      closeMoreMenu();
+    } else if (action === "menu-settings") {
+      closeMoreMenu();
+      switchScreen("settings");
+    } else if (action === "menu-sort-created") {
+      settings.sortField = "created_at";
+      saveSettings();
+      renderEntryList();
+      closeMoreMenu();
+    } else if (action === "menu-sort-modified") {
+      settings.sortField = "updated_at";
+      saveSettings();
+      renderEntryList();
+      closeMoreMenu();
+    }
+  });
 
   // 批量移动笔记本的关闭
   document.getElementById("batchMoveSheet")?.addEventListener("click", (event) => {
@@ -1440,6 +1606,8 @@ async function bootstrap() {
   }
 
   registerServiceWorker();
+
+  await initializeSyncConfigFromBackend();
 
   ui.screens.forEach((node) => {
     const active = node.classList.contains("is-active");
