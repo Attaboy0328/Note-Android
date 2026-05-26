@@ -977,7 +977,7 @@ function bindSwipe(card, entryId, inTrash) {
           }
           enterMultiSelectMode(entryId);
         }
-      }, 500);
+      }, 400);
     }
   });
 
@@ -1030,6 +1030,10 @@ function bindSwipe(card, entryId, inTrash) {
     }
 
     inner.style.transform = "";
+
+    if (event.type === "pointercancel") {
+      return;
+    }
 
     if (longPressed) {
       return;
