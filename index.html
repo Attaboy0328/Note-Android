@@ -342,6 +342,34 @@
     </div>
   </div>
 
+  <!-- 自定义确认弹窗 (Custom Confirm Modal) -->
+  <div class="custom-modal is-hidden" id="customConfirmModal" aria-hidden="true">
+    <div class="custom-modal__backdrop"></div>
+    <div class="custom-modal__panel" role="dialog">
+      <h3 class="custom-modal__title" id="customConfirmTitle">提示</h3>
+      <p class="custom-modal__message" id="customConfirmMessage"></p>
+      <div class="custom-modal__buttons">
+        <button type="button" class="custom-modal__btn custom-modal__btn--cancel tap-scale" id="customConfirmCancelBtn">取消</button>
+        <button type="button" class="custom-modal__btn custom-modal__btn--confirm tap-scale" id="customConfirmConfirmBtn">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 自定义输入弹窗 (Custom Prompt Modal) -->
+  <div class="custom-modal is-hidden" id="customPromptModal" aria-hidden="true">
+    <div class="custom-modal__backdrop"></div>
+    <div class="custom-modal__panel" role="dialog">
+      <h3 class="custom-modal__title" id="customPromptTitle">请输入</h3>
+      <div class="custom-modal__input-wrapper">
+        <input type="text" class="custom-modal__input" id="customPromptInput" autocomplete="off">
+      </div>
+      <div class="custom-modal__buttons">
+        <button type="button" class="custom-modal__btn custom-modal__btn--cancel tap-scale" id="customPromptCancelBtn">取消</button>
+        <button type="button" class="custom-modal__btn custom-modal__btn--confirm tap-scale" id="customPromptConfirmBtn">确定</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script type="module" src="app.js?v=16"></script>
 </body>

@@ -399,6 +399,108 @@ function blurActiveElement() {
   if (active instanceof HTMLElement) active.blur();
 }
 
+function showCustomConfirm(title, message) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById("customConfirmModal");
+    const titleEl = document.getElementById("customConfirmTitle");
+    const msgEl = document.getElementById("customConfirmMessage");
+    const cancelBtn = document.getElementById("customConfirmCancelBtn");
+    const confirmBtn = document.getElementById("customConfirmConfirmBtn");
+
+    if (!modal || !titleEl || !msgEl || !cancelBtn || !confirmBtn) {
+      resolve(confirm(message));
+      return;
+    }
+
+    titleEl.textContent = title;
+    msgEl.textContent = message;
+
+    modal.classList.remove("is-hidden");
+    // Ensure styles are applied before transitioning
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        modal.classList.add("is-visible");
+      });
+    });
+
+    const cleanup = (value) => {
+      modal.classList.remove("is-visible");
+      setTimeout(() => {
+        modal.classList.add("is-hidden");
+      }, 200);
+      cancelBtn.removeEventListener("click", onCancel);
+      confirmBtn.removeEventListener("click", onConfirm);
+      resolve(value);
+    };
+
+    function onCancel() {
+      cleanup(false);
+    }
+    function onConfirm() {
+      cleanup(true);
+    }
+
+    cancelBtn.addEventListener("click", onCancel);
+    confirmBtn.addEventListener("click", onConfirm);
+  });
+}
+
+function showCustomPrompt(title, defaultValue = "") {
+  return new Promise((resolve) => {
+    const modal = document.getElementById("customPromptModal");
+    const titleEl = document.getElementById("customPromptTitle");
+    const inputEl = document.getElementById("customPromptInput");
+    const cancelBtn = document.getElementById("customPromptCancelBtn");
+    const confirmBtn = document.getElementById("customPromptConfirmBtn");
+
+    if (!modal || !titleEl || !inputEl || !cancelBtn || !confirmBtn) {
+      resolve(prompt(title, defaultValue));
+      return;
+    }
+
+    titleEl.textContent = title;
+    inputEl.value = defaultValue;
+
+    modal.classList.remove("is-hidden");
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        modal.classList.add("is-visible");
+        inputEl.focus();
+        inputEl.select();
+      });
+    });
+
+    const cleanup = (value) => {
+      modal.classList.remove("is-visible");
+      setTimeout(() => {
+        modal.classList.add("is-hidden");
+      }, 200);
+      cancelBtn.removeEventListener("click", onCancel);
+      confirmBtn.removeEventListener("click", onConfirm);
+      inputEl.removeEventListener("keydown", onKeyDown);
+      resolve(value);
+    };
+
+    function onCancel() {
+      cleanup(null);
+    }
+    function onConfirm() {
+      cleanup(inputEl.value);
+    }
+    function onKeyDown(e) {
+      if (e.key === "Enter") {
+        onConfirm();
+      } else if (e.key === "Escape") {
+        onCancel();
+      }
+    }
+
+    cancelBtn.addEventListener("click", onCancel);
+    confirmBtn.addEventListener("click", onConfirm);
+    inputEl.addEventListener("keydown", onKeyDown);
+  });
+}
+
 function formatRelativeTime(iso) {
   const date = new Date(iso);
   const diff = Date.now() - date.getTime();
@@ -541,7 +643,8 @@ async function renameCategory(categoryId, name) {
 async function removeCategory(categoryId) {
   const category = state.categories.find((item) => item.id === categoryId);
   if (!category) return;
-  if (!confirm(`删除笔记本「${category.name}」？其中的笔记将移到默认笔记本。`)) return;
+  const confirmed = await showCustomConfirm("删除笔记本", `确定要删除笔记本「${category.name}」吗？其中的笔记将移到默认笔记本。`);
+  if (!confirmed) return;
 
   await deleteCategory(categoryId);
   if (isSyncConfigured()) {
@@ -593,8 +696,8 @@ function renderCategoryManageList() {
     renameBtn.type = "button";
     renameBtn.className = "category-manage__btn tap-scale";
     renameBtn.textContent = "重命名";
-    renameBtn.addEventListener("click", () => {
-      const nextName = window.prompt("笔记本名称", category.name);
+    renameBtn.addEventListener("click", async () => {
+      const nextName = await showCustomPrompt("修改笔记本名称", category.name);
       if (nextName != null) void renameCategory(category.id, nextName);
     });
 
@@ -1180,7 +1283,8 @@ async function executeBatchDelete() {
   const inTrash = state.listFilter === "trash";
   const confirmMsg = inTrash ? `确定要永久删除这 ${count} 篇笔记吗？删除后不可恢复。` : `确定要将这 ${count} 篇笔记移动到最近删除吗？`;
   
-  if (!confirm(confirmMsg)) return;
+  const confirmed = await showCustomConfirm(inTrash ? "永久删除" : "删除笔记", confirmMsg);
+  if (!confirmed) return;
   
   const selectedIds = Array.from(state.multiSelect.selectedIds);
   
@@ -1317,7 +1421,8 @@ function scheduleCloudPush() {
 }
 
 async function deleteEntry(entryId) {
-  if (!confirm("确定删除这条笔记？")) return;
+  const confirmed = await showCustomConfirm("删除笔记", "确定要将这条笔记移动到最近删除吗？");
+  if (!confirmed) return;
   await markEntryDeleted(entryId);
   if (state.editorEntryId === entryId) await closeEditor();
   await reloadData();
