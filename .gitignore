@@ -6,5 +6,7 @@ node_modules/
 .env.local
 .wrangler/
 .git/
-.github/
+.github/*
+!.github/workflows/
+!.github/workflows/*.yml
 .supabase/
