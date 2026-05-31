@@ -533,8 +533,9 @@ body[data-screen="settings"] .mobile-nav {
   bottom: 0;
   width: 188px;
   display: flex;
-  transform: none;
+  transform: translateX(100%);
   z-index: 1;
+  transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .entry-card__action {
@@ -546,24 +547,28 @@ body[data-screen="settings"] .mobile-nav {
 }
 
 .entry-card__action--pin {
-  background: #5f7694;
+  background: #7084a1;
 }
 
 .entry-card__action--move {
-  background: #8a6f4a;
+  background: #9a805f;
 }
 
 .entry-card__action--delete {
-  background: var(--danger);
+  background: #c86a60;
 }
 
 .entry-card__action--restore {
   width: 100%;
-  background: var(--accent);
+  background: #8f7755;
 }
 
 .entry-card.is-swiped .entry-card__inner {
   transform: translateX(-188px);
+}
+
+.entry-card.is-swiped .entry-card__actions {
+  transform: translateX(0);
 }
 
 .empty-box {
