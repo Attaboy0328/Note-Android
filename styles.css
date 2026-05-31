@@ -2113,13 +2113,14 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
   display: flex;
   align-items: center;
   gap: 7px;
-  padding: 0 12px;
+  padding: 0 12px 0 10px;
   background: color-mix(in srgb, var(--surface) 86%, var(--bg));
   color: var(--muted);
 }
 
 .mobile-nav__search input {
   flex: 1;
+  min-width: 0;
   border: 0;
   background: transparent;
   outline: none;
@@ -2128,7 +2129,9 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
   line-height: 42px;
   padding: 0;
   margin: 0;
-  text-indent: -2px;
+  text-indent: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .mobile-nav__action {
