@@ -80,7 +80,9 @@ const ui = {
   syncToast: document.getElementById("syncToast"),
   moreMenuBtn: document.getElementById("moreMenuBtn"),
   moreMenuPopover: document.getElementById("moreMenuPopover"),
-  moreMenuBackdrop: document.getElementById("moreMenuBackdrop")
+  moreMenuBackdrop: document.getElementById("moreMenuBackdrop"),
+  installAppBtn: document.getElementById("installAppBtn"),
+  installHint: document.getElementById("installHint")
 };
 
 const state = {
@@ -101,6 +103,53 @@ const state = {
 let settings = loadSettings();
 let toastTimer = null;
 let editorCtrl = null;
+let deferredInstallPrompt = null;
+
+function isIosStandalone() {
+  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+}
+
+function isIosSafari() {
+  const ua = window.navigator.userAgent.toLowerCase();
+  return /iphone|ipad|ipod/.test(ua) && /safari/.test(ua) && !/crios|fxios|edgios/.test(ua);
+}
+
+function updateInstallUI() {
+  if (!ui.installAppBtn || !ui.installHint) return;
+  if (isIosStandalone()) {
+    ui.installAppBtn.disabled = true;
+    ui.installHint.textContent = "已安装到主屏幕。";
+    return;
+  }
+  if (deferredInstallPrompt) {
+    ui.installAppBtn.disabled = false;
+    ui.installHint.textContent = "点击安装，浏览器会弹出系统安装对话框。";
+    return;
+  }
+  if (isIosSafari()) {
+    ui.installAppBtn.disabled = false;
+    ui.installHint.textContent = "iPhone 请点浏览器“分享”按钮，再选“添加到主屏幕”。";
+    return;
+  }
+  ui.installAppBtn.disabled = true;
+  ui.installHint.textContent = "当前环境暂不支持直接安装，请使用 Chrome 并打开 HTTPS 页面。";
+}
+
+async function triggerInstallFlow() {
+  if (deferredInstallPrompt) {
+    deferredInstallPrompt.prompt();
+    const choice = await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    updateInstallUI();
+    showToast(choice?.outcome === "accepted" ? "已发起安装" : "已取消安装");
+    return;
+  }
+  if (isIosSafari() && !isIosStandalone()) {
+    showToast("请点分享按钮，然后选择“添加到主屏幕”");
+    return;
+  }
+  showToast("当前环境暂不可安装");
+}
 
 function setupEditorToolbarExperience() {
   const toolbar = ui.editorToolbar;
@@ -1815,6 +1864,9 @@ function bindEvents() {
     } else if (action === "menu-settings") {
       closeMoreMenu();
       switchScreenWithHistory("settings");
+    } else if (action === "menu-install") {
+      closeMoreMenu();
+      void triggerInstallFlow();
     } else if (action === "menu-sort-created") {
       settings.sortField = "created_at";
       saveSettings();
@@ -1846,6 +1898,10 @@ function bindEvents() {
     });
     state.swipe.activeId = null;
   });
+
+  ui.installAppBtn?.addEventListener("click", () => {
+    void triggerInstallFlow();
+  });
 }
 
 function registerServiceWorker() {
@@ -1856,6 +1912,17 @@ function registerServiceWorker() {
 }
 
 async function bootstrap() {
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    updateInstallUI();
+  });
+  window.addEventListener("appinstalled", () => {
+    deferredInstallPrompt = null;
+    updateInstallUI();
+    showToast("安装完成");
+  });
+
   mountSkinGrids();
   bindThemeModeControls();
   applyTheme();
@@ -1888,6 +1955,7 @@ async function bootstrap() {
   renderEntryList();
   renderSettings();
   updateShellState();
+  updateInstallUI();
 
   const params = new URLSearchParams(window.location.search);
   if (params.get("new") === "1") {
