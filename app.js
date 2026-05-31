@@ -1519,7 +1519,14 @@ function bindEvents() {
 
   ui.fabAddBtn?.addEventListener("click", () => void openEditor());
   ui.bottomAddBtn?.addEventListener("click", () => void openEditor());
-  ui.bottomSettingsBtn?.addEventListener("click", () => switchScreen("settings"));
+  ui.bottomSettingsBtn?.addEventListener("click", (event) => {
+    event.stopPropagation();
+    if (ui.moreMenuPopover?.classList.contains("is-hidden")) {
+      openMoreMenu();
+    } else {
+      closeMoreMenu();
+    }
+  });
 
   ui.searchToggleBtn?.addEventListener("click", () => {
     ui.searchBar.classList.toggle("is-hidden");

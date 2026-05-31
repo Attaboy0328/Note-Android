@@ -2070,8 +2070,12 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
 .mobile-nav--ios {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 24px;
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  backdrop-filter: saturate(140%) blur(10px);
+  -webkit-backdrop-filter: saturate(140%) blur(10px);
 }
 
 .mobile-nav--ios .mobile-nav__indicator {
@@ -2080,13 +2084,13 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
 
 .mobile-nav__search {
   flex: 1;
-  height: 46px;
+  height: 44px;
   border-radius: 999px;
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 0 14px;
-  background: color-mix(in srgb, var(--text) 6%, var(--surface));
+  background: color-mix(in srgb, var(--surface) 86%, var(--bg));
   color: var(--muted);
 }
 
@@ -2100,13 +2104,13 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
 }
 
 .mobile-nav__action {
-  width: 46px;
-  height: 46px;
+  width: 44px;
+  height: 44px;
   border-radius: 999px;
   border: 0;
   display: grid;
   place-items: center;
-  background: color-mix(in srgb, var(--text) 6%, var(--surface));
+  background: color-mix(in srgb, var(--surface) 86%, var(--bg));
   color: var(--text);
 }
 
