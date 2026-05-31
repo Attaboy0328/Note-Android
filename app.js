@@ -1307,8 +1307,13 @@ function updateMoreMenuUI() {
   }
 }
 
-function openMoreMenu() {
+function openMoreMenu(anchor = "top") {
   updateMoreMenuUI();
+  if (anchor === "bottom") {
+    ui.moreMenuPopover?.classList.add("popover-menu--from-bottom");
+  } else {
+    ui.moreMenuPopover?.classList.remove("popover-menu--from-bottom");
+  }
   ui.moreMenuPopover?.classList.remove("is-hidden");
 }
 
@@ -1615,8 +1620,11 @@ function bindEvents() {
   ui.bottomAddBtn?.addEventListener("click", () => void openEditor());
   ui.bottomSettingsBtn?.addEventListener("click", (event) => {
     event.stopPropagation();
-    closeMoreMenu();
-    switchScreenWithHistory("settings");
+    if (ui.moreMenuPopover?.classList.contains("is-hidden")) {
+      openMoreMenu("bottom");
+    } else {
+      closeMoreMenu();
+    }
   });
   ui.settingsBackBtn?.addEventListener("click", () => {
     if (history.state?.noteScreenSettings) {
@@ -1778,7 +1786,7 @@ function bindEvents() {
   ui.moreMenuBtn?.addEventListener("click", (event) => {
     event.stopPropagation();
     if (ui.moreMenuPopover?.classList.contains("is-hidden")) {
-      openMoreMenu();
+      openMoreMenu("top");
     } else {
       closeMoreMenu();
     }

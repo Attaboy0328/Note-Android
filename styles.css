@@ -2303,6 +2303,13 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
   background: color-mix(in srgb, var(--surface) 93%, transparent);
 }
 
+.popover-menu.popover-menu--from-bottom .popover-menu__panel {
+  top: auto;
+  right: 16px;
+  bottom: calc(var(--safe-bottom) + 70px);
+  transform-origin: bottom right;
+}
+
 @keyframes popover-in {
   from {
     transform: scale(0.9) translateY(-10px);
