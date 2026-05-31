@@ -908,8 +908,8 @@ function renderEntryList() {
       .trim();
     const categoryName = getCategoryName(entry.category_id);
     const timeLabel = inTrash
-      ? `鍒犻櫎浜?${formatRelativeTime(entry.deleted_at)}`
-      : `${formatRelativeTime(entry.updated_at)} 路 ${countChars(entry.body)} 瀛梎;
+      ? `删除于 ${formatRelativeTime(entry.deleted_at)}`
+      : `${formatRelativeTime(entry.updated_at)}`;
 
     const isPinned = Boolean(entry.is_pinned);
     const isSelected = state.multiSelect?.active && state.multiSelect.selectedIds.has(entry.id);
@@ -925,20 +925,17 @@ function renderEntryList() {
       <div class="entry-card__actions" data-action="swipe-actions">${inTrash ? `<button type="button" class="entry-card__action entry-card__action--restore" data-swipe-action="restore">恢复</button>` : `<button type="button" class="entry-card__action entry-card__action--pin" data-swipe-action="pin">${pinLabel}</button><button type="button" class="entry-card__action entry-card__action--move" data-swipe-action="move">移动</button><button type="button" class="entry-card__action entry-card__action--delete" data-swipe-action="delete">删除</button>`}</div>
       <div class="entry-card__inner">
         <h3 class="entry-card__title"><span class="entry-card__title-text"></span></h3>
-        <p class="entry-card__preview"></p>
-        ${imgHtml}
-        <div class="entry-card__meta">
-          <span class="entry-card__tag${categoryName ? "" : " is-hidden"}"></span>
+        <div class="entry-card__meta entry-card__meta--compact">
           <span class="entry-card__time"></span>
+          <span class="entry-card__preview"></span>
         </div>
+        ${imgHtml}
       </div>
       <div class="entry-card__checkbox ${checkedClass}"></div>
     `;
 
     card.querySelector(".entry-card__title-text").textContent = title;
-    card.querySelector(".entry-card__preview").textContent = preview || "锛堢┖鍐呭锛?;
-    const tag = card.querySelector(".entry-card__tag");
-    if (categoryName) tag.textContent = categoryName;
+    card.querySelector(".entry-card__preview").textContent = preview || "无更多文本";
     card.querySelector(".entry-card__time").textContent = timeLabel;
 
     bindSwipe(card, entry.id, inTrash);

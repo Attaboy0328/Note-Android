@@ -428,7 +428,7 @@ body[data-screen="settings"] .mobile-nav {
 .entry-list {
   display: grid;
   gap: 10px;
-  padding-bottom: calc(132px + var(--safe-bottom));
+  padding-bottom: calc(156px + var(--safe-bottom));
 }
 
 .entry-card {
@@ -473,21 +473,21 @@ body[data-screen="settings"] .mobile-nav {
 }
 
 .entry-card__title {
-  margin: 0 0 6px;
+  margin: 0 0 4px;
   font-size: 16px;
   font-weight: 600;
   line-height: 1.4;
 }
 
 .entry-card__preview {
-  margin: 0 0 10px;
+  margin: 0;
   color: var(--muted);
-  font-size: 14px;
-  line-height: 1.55;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  font-size: 13px;
+  line-height: 1.4;
+  display: block;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .entry-card__meta {
@@ -497,6 +497,23 @@ body[data-screen="settings"] .mobile-nav {
   gap: 8px;
   font-size: 12px;
   color: var(--muted);
+}
+
+.entry-card__meta--compact {
+  justify-content: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+
+.entry-card__meta--compact .entry-card__time {
+  flex: 0 0 auto;
+  opacity: 0.92;
+}
+
+.entry-card__meta--compact .entry-card__preview {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .entry-card__tag {
@@ -778,7 +795,19 @@ body.editor-open .mobile-nav {
   border-radius: 18px;
   background: var(--nav-bg);
   box-shadow: var(--shadow);
+  border: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
   z-index: 15;
+}
+
+.mobile-nav::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 14px;
+  right: 14px;
+  height: 10px;
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--bg) 0%, transparent), color-mix(in srgb, var(--bg) 96%, transparent));
+  pointer-events: none;
 }
 
 .mobile-nav__indicator {
