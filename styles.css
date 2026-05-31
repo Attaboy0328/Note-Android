@@ -2702,3 +2702,76 @@ html[data-skin="graphite"][data-theme="dark"] {
   --accent: #a99272;
   --accent-soft: rgba(169, 146, 114, 0.2);
 }
+
+/* 长时阅读优化：前 10 套主题 */
+html[data-skin="paper"] .editor-sheet__body,
+html[data-skin="snow"] .editor-sheet__body,
+html[data-skin="sepia"] .editor-sheet__body,
+html[data-skin="green"] .editor-sheet__body,
+html[data-skin="blue"] .editor-sheet__body,
+html[data-skin="sand"] .editor-sheet__body,
+html[data-skin="gray"] .editor-sheet__body,
+html[data-skin="slate"] .editor-sheet__body,
+html[data-skin="charcoal"] .editor-sheet__body,
+html[data-skin="ink"] .editor-sheet__body {
+  line-height: 1.84;
+  letter-spacing: 0.016em;
+  font-weight: 420;
+}
+
+html[data-skin="paper"] .entry-card__preview,
+html[data-skin="snow"] .entry-card__preview,
+html[data-skin="sepia"] .entry-card__preview,
+html[data-skin="green"] .entry-card__preview,
+html[data-skin="blue"] .entry-card__preview,
+html[data-skin="sand"] .entry-card__preview,
+html[data-skin="gray"] .entry-card__preview,
+html[data-skin="slate"] .entry-card__preview,
+html[data-skin="charcoal"] .entry-card__preview,
+html[data-skin="ink"] .entry-card__preview {
+  line-height: 1.6;
+}
+
+html[data-skin="paper"] .entry-card__title,
+html[data-skin="snow"] .entry-card__title,
+html[data-skin="sepia"] .entry-card__title,
+html[data-skin="green"] .entry-card__title,
+html[data-skin="blue"] .entry-card__title,
+html[data-skin="sand"] .entry-card__title,
+html[data-skin="gray"] .entry-card__title,
+html[data-skin="slate"] .entry-card__title,
+html[data-skin="charcoal"] .entry-card__title,
+html[data-skin="ink"] .entry-card__title {
+  font-weight: 590;
+}
+
+html[data-skin="snow"][data-theme="dark"] {
+  --text: #ece4d8;
+  --muted: #b8ab98;
+  --accent: #9f8a6d;
+  --accent-soft: rgba(159, 138, 109, 0.2);
+}
+html[data-skin="gray"][data-theme="dark"] {
+  --text: #ece3d6;
+  --muted: #b9ac99;
+  --accent: #a18e72;
+  --accent-soft: rgba(161, 142, 114, 0.2);
+}
+html[data-skin="slate"][data-theme="dark"] {
+  --text: #e9dfd1;
+  --muted: #bcae9a;
+  --accent: #a69274;
+  --accent-soft: rgba(166, 146, 116, 0.2);
+}
+html[data-skin="ink"][data-theme="dark"] {
+  --text: #e8dfd1;
+  --muted: #b9ab97;
+  --accent: #a79375;
+  --accent-soft: rgba(167, 147, 117, 0.2);
+}
+html[data-skin="blue"][data-theme="dark"] {
+  --text: #e8dfd2;
+  --muted: #b8aa97;
+  --accent: #a89071;
+  --accent-soft: rgba(168, 144, 113, 0.2);
+}
