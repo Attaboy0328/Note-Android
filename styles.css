@@ -538,7 +538,7 @@ body[data-screen="settings"] .mobile-nav {
   top: 0;
   right: 0;
   bottom: 0;
-  width: 188px;
+  width: var(--swipe-width, 188px);
   display: flex;
   transform: translateX(100%);
   z-index: 1;
@@ -566,12 +566,12 @@ body[data-screen="settings"] .mobile-nav {
 }
 
 .entry-card__action--restore {
-  width: 100%;
+  width: var(--swipe-width, 64px);
   background: #8f7755;
 }
 
 .entry-card.is-swiped .entry-card__inner {
-  transform: translateX(-188px);
+  transform: translateX(calc(-1 * var(--swipe-width, 188px)));
 }
 
 .entry-card.is-swiped .entry-card__actions {
@@ -2520,6 +2520,14 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
   visibility: hidden;
   opacity: 0;
   transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+body.modal-open .action-sheet {
+  pointer-events: none;
+}
+
+body.modal-open .custom-modal.is-visible {
+  pointer-events: auto;
 }
 
 .custom-modal.is-visible {

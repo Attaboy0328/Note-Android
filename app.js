@@ -462,6 +462,7 @@ function showCustomConfirm(title, message) {
     msgEl.textContent = message;
 
     modal.classList.remove("is-hidden");
+    document.body.classList.add("modal-open");
     // Ensure styles are applied before transitioning
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -471,6 +472,7 @@ function showCustomConfirm(title, message) {
 
     const cleanup = (value) => {
       modal.classList.remove("is-visible");
+      document.body.classList.remove("modal-open");
       setTimeout(() => {
         modal.classList.add("is-hidden");
       }, 200);
@@ -508,6 +510,7 @@ function showCustomPrompt(title, defaultValue = "") {
     inputEl.value = defaultValue;
 
     modal.classList.remove("is-hidden");
+    document.body.classList.add("modal-open");
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
         modal.classList.add("is-visible");
@@ -518,6 +521,7 @@ function showCustomPrompt(title, defaultValue = "") {
 
     const cleanup = (value) => {
       modal.classList.remove("is-visible");
+      document.body.classList.remove("modal-open");
       setTimeout(() => {
         modal.classList.add("is-hidden");
       }, 200);
@@ -998,6 +1002,7 @@ function renderEntryList() {
 function bindSwipe(card, entryId, inTrash) {
   const inner = card.querySelector(".entry-card__inner");
   const actions = card.querySelector("[data-action='swipe-actions']");
+  const swipeWidth = Number.parseInt(getComputedStyle(card).getPropertyValue("--swipe-width"), 10) || (inTrash ? 64 : 188);
   let startX = 0;
   let startY = 0;
   let currentX = 0;
@@ -1059,7 +1064,7 @@ function bindSwipe(card, entryId, inTrash) {
 
     if (state.multiSelect?.active) return;
 
-    currentX = Math.min(0, Math.max(-188, diffX));
+    currentX = Math.min(0, Math.max(-swipeWidth, diffX));
     if (Math.abs(currentX) > 6) {
       inner.style.transform = `translateX(${currentX}px)`;
       if (!inner.hasPointerCapture(event.pointerId)) {
@@ -1111,7 +1116,7 @@ function bindSwipe(card, entryId, inTrash) {
 
     if (state.multiSelect?.active) return;
 
-    card.classList.toggle("is-swiped", currentX <= -56);
+    card.classList.toggle("is-swiped", currentX <= -Math.max(24, Math.floor(swipeWidth * 0.35)));
     if (state.swipe.activeId && state.swipe.activeId !== entryId) {
       document.querySelectorAll(".entry-card.is-swiped").forEach((node) => {
         if (node.dataset.entryId !== entryId) node.classList.remove("is-swiped");
@@ -1880,3 +1885,5 @@ bootstrap().catch((error) => {
   console.error(error);
   showToast("启动失败，请刷新页面");
 });
+    const swipeWidth = inTrash ? 64 : 188;
+    card.style.setProperty("--swipe-width", `${swipeWidth}px`);
