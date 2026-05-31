@@ -428,7 +428,13 @@ body[data-screen="settings"] .mobile-nav {
 .entry-list {
   display: grid;
   gap: 10px;
-  padding-bottom: calc(156px + var(--safe-bottom));
+  padding-bottom: calc(184px + var(--safe-bottom));
+}
+
+.entry-list::after {
+  content: "";
+  display: block;
+  height: 12px;
 }
 
 .entry-card {
@@ -483,7 +489,7 @@ body[data-screen="settings"] .mobile-nav {
   margin: 0;
   color: var(--muted);
   font-size: 13px;
-  line-height: 1.4;
+  line-height: 1.35;
   display: block;
   white-space: nowrap;
   overflow: hidden;
@@ -501,9 +507,9 @@ body[data-screen="settings"] .mobile-nav {
 
 .entry-card__meta--compact {
   justify-content: flex-start;
-  gap: 8px;
+  gap: 10px;
   font-size: 13px;
-  margin-bottom: 2px;
+  margin-bottom: 0;
 }
 
 .entry-card__meta--compact .entry-card__time {
