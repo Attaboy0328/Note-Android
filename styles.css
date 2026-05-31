@@ -428,14 +428,14 @@ body[data-screen="settings"] .mobile-nav {
 .entry-list {
   display: grid;
   gap: 10px;
-  padding-bottom: calc(220px + var(--safe-bottom));
-  margin-bottom: 10px;
+  padding-bottom: calc(208px + var(--safe-bottom));
+  margin-bottom: 0;
 }
 
 .entry-list::after {
   content: "";
   display: block;
-  height: 12px;
+  height: 24px;
 }
 
 .entry-card {
@@ -823,18 +823,6 @@ body.editor-open .mobile-nav {
   pointer-events: none;
 }
 
-.mobile-nav::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: calc(-1 * (var(--safe-bottom) + 14px));
-  border-radius: inherit;
-  background: var(--nav-bg);
-  z-index: -1;
-  pointer-events: none;
-}
 
 .mobile-nav__indicator {
   position: absolute;
