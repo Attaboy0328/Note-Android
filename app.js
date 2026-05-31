@@ -102,6 +102,47 @@ let settings = loadSettings();
 let toastTimer = null;
 let editorCtrl = null;
 
+function setupEditorToolbarExperience() {
+  const toolbar = ui.editorToolbar;
+  if (!(toolbar instanceof HTMLElement)) return;
+  if (toolbar.dataset.enhanced === "true") return;
+  toolbar.dataset.enhanced = "true";
+
+  const groups = Array.from(toolbar.querySelectorAll(".editor-toolbar__group"));
+  const separators = Array.from(toolbar.querySelectorAll(".editor-toolbar__sep"));
+  if (groups.length <= 3) return;
+
+  groups.forEach((group, index) => {
+    if (index >= 3) group.classList.add("is-advanced");
+  });
+  separators.forEach((sep, index) => {
+    if (index >= 2) sep.classList.add("is-advanced");
+  });
+
+  toolbar.classList.add("is-compact");
+
+  const toggleBtn = document.createElement("button");
+  toggleBtn.type = "button";
+  toggleBtn.className = "editor-toolbar__btn editor-toolbar__btn--toggle tap-scale";
+  toggleBtn.setAttribute("aria-label", "更多格式");
+  toggleBtn.setAttribute("aria-expanded", "false");
+  toggleBtn.dataset.cmd = "toggle-advanced";
+  toggleBtn.innerHTML = `<span class="editor-toolbar__toggle-text">更多</span>`;
+  toolbar.appendChild(toggleBtn);
+}
+
+function toggleAdvancedToolbar() {
+  const toolbar = ui.editorToolbar;
+  if (!(toolbar instanceof HTMLElement)) return;
+  const expanded = toolbar.classList.toggle("is-expanded");
+  toolbar.classList.toggle("is-compact", !expanded);
+  const toggleBtn = toolbar.querySelector(".editor-toolbar__btn--toggle");
+  if (toggleBtn instanceof HTMLElement) {
+    toggleBtn.setAttribute("aria-expanded", expanded ? "true" : "false");
+    toggleBtn.innerHTML = `<span class="editor-toolbar__toggle-text">${expanded ? "收起" : "更多"}</span>`;
+  }
+}
+
 function onEditorChange() {
   scheduleAutoSave();
 }
@@ -159,6 +200,7 @@ function initEditorController() {
     throw new Error("editorBody missing");
   }
   editorCtrl = createEditorController(ui.editorBody, ui.editorToolbar, onEditorChange);
+  setupEditorToolbarExperience();
 }
 
 function getEditorPlainText() {
@@ -1645,6 +1687,13 @@ function bindEvents() {
     if (action === "app-settings") {
       void closeEditor().then(() => switchScreenWithHistory("settings"));
     }
+  });
+
+  ui.editorToolbar?.addEventListener("click", (event) => {
+    const btn = event.target.closest("[data-cmd='toggle-advanced']");
+    if (!btn) return;
+    event.preventDefault();
+    toggleAdvancedToolbar();
   });
 
   ui.editorShareSheet?.addEventListener("click", (event) => {

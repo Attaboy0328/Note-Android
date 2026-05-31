@@ -1083,7 +1083,7 @@ body[data-screen="settings"] .mobile-nav__indicator {
   min-width: 0;
   max-width: 100vw;
   border-top: 1px solid var(--line);
-  background: color-mix(in srgb, var(--surface) 92%, var(--editor-bg));
+  background: color-mix(in srgb, var(--surface) 88%, var(--editor-bg));
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
@@ -1111,10 +1111,10 @@ body[data-screen="settings"] .mobile-nav__indicator {
   display: inline-flex;
   flex-wrap: nowrap;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   width: max-content;
   min-width: 100%;
-  padding: 6px 28px 6px 10px;
+  padding: 7px 28px 7px 10px;
   border-top: 0;
   background: transparent;
   overflow: visible;
@@ -1148,10 +1148,10 @@ body[data-screen="settings"] .mobile-nav__indicator {
 
 .editor-toolbar__btn {
   flex: 0 0 auto;
-  width: 44px;
-  height: 44px;
+  width: 42px;
+  height: 42px;
   border: 0;
-  border-radius: 10px;
+  border-radius: 11px;
   background: transparent;
   color: var(--text);
   display: grid;
@@ -2075,6 +2075,24 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.editor-toolbar.is-compact .is-advanced {
+  display: none !important;
+}
+
+.editor-toolbar__btn--toggle {
+  width: auto;
+  min-width: 48px;
+  padding: 0 10px;
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.editor-toolbar__toggle-text {
+  font-size: 12px;
+  letter-spacing: 0.01em;
 }
 
 #searchToggleBtn {
