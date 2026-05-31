@@ -1833,6 +1833,19 @@ function bindEvents() {
     const closeId = event.target.closest("[data-close]")?.dataset.close;
     if (closeId) closeActionSheet(document.getElementById(closeId));
   });
+
+  document.addEventListener("click", (event) => {
+    if (!state.swipe.activeId) return;
+    if (state.multiSelect?.active) return;
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    const isInsideCard = target.closest(".entry-card");
+    if (isInsideCard) return;
+    document.querySelectorAll(".entry-card.is-swiped").forEach((node) => {
+      node.classList.remove("is-swiped");
+    });
+    state.swipe.activeId = null;
+  });
 }
 
 function registerServiceWorker() {
