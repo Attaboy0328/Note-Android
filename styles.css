@@ -1120,6 +1120,31 @@ body[data-screen="settings"] .mobile-nav__indicator {
   overflow: visible;
 }
 
+.editor-toolbar.is-compact {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  max-height: 56px;
+}
+
+.editor-toolbar.is-expanded {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  row-gap: 6px;
+  column-gap: 4px;
+  padding: 8px 10px;
+}
+
+.editor-toolbar.is-expanded .editor-toolbar__group {
+  display: contents;
+}
+
+.editor-toolbar.is-expanded .editor-toolbar__sep {
+  display: none;
+}
+
 @media (max-width: 768px) {
   .editor-toolbar {
     padding: 4px 32px 4px 8px;
