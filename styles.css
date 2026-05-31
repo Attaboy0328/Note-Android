@@ -2059,6 +2059,14 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
   display: none !important;
 }
 
+#moreMenuBtn {
+  display: none !important;
+}
+
+#fabAddBtn {
+  display: none !important;
+}
+
 .mobile-nav--ios {
   display: flex;
   align-items: center;
@@ -2100,6 +2108,10 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
   place-items: center;
   background: color-mix(in srgb, var(--text) 6%, var(--surface));
   color: var(--text);
+}
+
+#bottomSettingsBtn {
+  display: grid !important;
 }
 
 /* 弹出菜单样式 */
