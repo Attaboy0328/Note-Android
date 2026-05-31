@@ -1,4 +1,4 @@
-﻿import {
+import {
   deleteCategory,
   deleteEntryPermanent,
   getAllCategories,
@@ -29,8 +29,8 @@ const SETTINGS_KEY = "note-settings-v1";
 const AUTO_SAVE_MS = 600;
 const CATEGORY_FILTER_PREFIX = "category:";
 const LIST_FILTERS = [
-  { id: "all", name: "鍏ㄩ儴" },
-  { id: "trash", name: "鏈€杩戝垹闄? }
+  { id: "all", name: "全部" },
+  { id: "trash", name: "最近删除" }
 ];
 
 const ui = {
@@ -124,10 +124,10 @@ function setupEditorToolbarExperience() {
   const toggleBtn = document.createElement("button");
   toggleBtn.type = "button";
   toggleBtn.className = "editor-toolbar__btn editor-toolbar__btn--toggle tap-scale";
-  toggleBtn.setAttribute("aria-label", "鏇村鏍煎紡");
+  toggleBtn.setAttribute("aria-label", "更多格式");
   toggleBtn.setAttribute("aria-expanded", "false");
   toggleBtn.dataset.cmd = "toggle-advanced";
-  toggleBtn.innerHTML = `<span class="editor-toolbar__toggle-text">鏇村</span>`;
+  toggleBtn.innerHTML = `<span class="editor-toolbar__toggle-text">更多</span>`;
   toolbar.appendChild(toggleBtn);
 }
 
@@ -139,7 +139,7 @@ function toggleAdvancedToolbar() {
   const toggleBtn = toolbar.querySelector(".editor-toolbar__btn--toggle");
   if (toggleBtn instanceof HTMLElement) {
     toggleBtn.setAttribute("aria-expanded", expanded ? "true" : "false");
-    toggleBtn.innerHTML = `<span class="editor-toolbar__toggle-text">${expanded ? "鏀惰捣" : "鏇村"}</span>`;
+    toggleBtn.innerHTML = `<span class="editor-toolbar__toggle-text">${expanded ? "收起" : "更多"}</span>`;
   }
 }
 
@@ -209,7 +209,7 @@ function getEditorPlainText() {
 
 function ensureEditorReady() {
   if (editorCtrl) return true;
-  showToast("缂栬緫鍣ㄦ湭灏辩华锛岃鍒锋柊椤甸潰");
+  showToast("编辑器未就绪，请刷新页面");
   return false;
 }
 
@@ -351,12 +351,12 @@ function hideFindBar() {
 function findInEditor(forward = true) {
   const query = ui.editorFindInput?.value.trim();
   if (!query) {
-    showToast("璇疯緭鍏ユ煡鎵惧唴瀹?);
+    showToast("请输入查找内容");
     return;
   }
   ui.editorBody?.focus();
   const found = window.find(query, false, !forward, true, false, true, false);
-  if (!found) showToast("鏈壘鍒板尮閰嶅唴瀹?);
+  if (!found) showToast("未找到匹配内容");
 }
 
 function renderSkinSelection() {
@@ -370,7 +370,7 @@ function renderSkinPicker() {
 function renderMoveTargets() {
   if (!ui.editorMoveList) return;
   ui.editorMoveList.innerHTML = "";
-  const targets = [{ id: "", name: "榛樿绗旇鏈? }, ...state.categories.map((item) => ({ id: item.id, name: item.name }))];
+  const targets = [{ id: "", name: "默认笔记本" }, ...state.categories.map((item) => ({ id: item.id, name: item.name }))];
   targets.forEach((target) => {
     const button = document.createElement("button");
     button.type = "button";
@@ -387,7 +387,7 @@ async function moveCurrentNote(categoryId) {
   if (!entry) return;
   await putEntry({ ...entry, category_id: categoryId || null, updated_at: new Date().toISOString() });
   closeActionSheet(ui.editorMoveSheet);
-  showToast(categoryId ? "宸茬Щ鍔? : "宸茬Щ鍒伴粯璁ょ瑪璁版湰");
+  showToast(categoryId ? "已移动" : "已移到默认笔记本");
   scheduleCloudPush();
 }
 
@@ -406,29 +406,29 @@ async function handleShareAction(type) {
   try {
     if (type === "text") {
       await shareAsText(title, plain);
-      showToast("宸插垎浜枃瀛?);
+      showToast("已分享文字");
       return;
     }
     if (type === "image") {
       await shareAsImage(title, plain || title);
-      showToast("宸茬敓鎴愬浘鐗?);
+      showToast("已生成图片");
       return;
     }
     if (type === "link") {
-      if (!state.editorEntryId) throw new Error("璇峰厛淇濆瓨绗旇");
+      if (!state.editorEntryId) throw new Error("请先保存笔记");
       await persistEditor(true);
       const url = await shareAsLink(state.editorEntryId);
-      showToast(url ? "閾炬帴宸插鍒? : "宸插垎浜摼鎺?);
+      showToast(url ? "链接已复制" : "已分享链接");
       return;
     }
     if (type === "word") {
       await shareAsWord(title, html);
-      showToast("宸插鍑?Word 鏂囨。");
+      showToast("已导出 Word 文档");
     }
   } catch (error) {
     if (error?.name === "AbortError") return;
     console.warn("Share failed", error);
-    showToast(error?.message || "鍒嗕韩澶辫触");
+    showToast(error?.message || "分享失败");
   }
 }
 
@@ -551,12 +551,12 @@ function formatRelativeTime(iso) {
   const date = new Date(iso);
   const diff = Date.now() - date.getTime();
   const minutes = Math.floor(diff / 60000);
-  if (minutes < 1) return "鍒氬垰";
-  if (minutes < 60) return `${minutes} 鍒嗛挓鍓峘;
+  if (minutes < 1) return "刚刚";
+  if (minutes < 60) return `${minutes} 分钟前`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours} 灏忔椂鍓峘;
+  if (hours < 24) return `${hours} 小时前`;
   const days = Math.floor(hours / 24);
-  if (days < 7) return `${days} 澶╁墠`;
+  if (days < 7) return `${days} 天前`;
   return new Intl.DateTimeFormat("zh-CN", { month: "short", day: "numeric" }).format(date);
 }
 
@@ -565,15 +565,15 @@ function deriveTitle(body) {
   const titleMatch = html.match(/<h1[^>]*class="[^"]*note-title[^"]*"[^>]*>([\s\S]*?)<\/h1>/i);
   if (titleMatch) {
     const titleText = htmlToPlainText(titleMatch[1]).trim();
-    if (titleText) return titleText.length > 42 ? `${titleText.slice(0, 42)}鈥 : titleText;
+    if (titleText) return titleText.length > 42 ? `${titleText.slice(0, 42)}…` : titleText;
   }
   const plain = htmlToPlainText(body);
   const line = plain
     .split(/\r?\n/)
     .map((part) => part.trim())
     .find(Boolean);
-  if (!line) return "鏃犳爣棰?;
-  return line.length > 42 ? `${line.slice(0, 42)}鈥 : line;
+  if (!line) return "无标题";
+  return line.length > 42 ? `${line.slice(0, 42)}…` : line;
 }
 
 function countChars(text) {
@@ -635,11 +635,11 @@ function openCategoryManageSheet() {
 async function createCategory(name) {
   const trimmed = String(name || "").trim();
   if (!trimmed) {
-    showToast("璇疯緭鍏ョ瑪璁版湰鍚嶇О");
+    showToast("请输入笔记本名称");
     return null;
   }
   if (state.categories.some((item) => item.name === trimmed)) {
-    showToast("宸叉湁鍚屽悕绗旇鏈?);
+    showToast("已有同名笔记本");
     return null;
   }
   const now = new Date().toISOString();
@@ -663,7 +663,7 @@ async function createCategory(name) {
   await reloadData();
   renderListFilters();
   renderCategoryManageList();
-  showToast(`宸插垱寤恒€?{trimmed}銆峘);
+  showToast(`已创建「${trimmed}」`);
   return category;
 }
 
@@ -673,7 +673,7 @@ async function renameCategory(categoryId, name) {
   const category = state.categories.find((item) => item.id === categoryId);
   if (!category) return;
   if (state.categories.some((item) => item.id !== categoryId && item.name === trimmed)) {
-    showToast("宸叉湁鍚屽悕绗旇鏈?);
+    showToast("已有同名笔记本");
     return;
   }
   const next = { ...category, name: trimmed, updated_at: new Date().toISOString() };
@@ -683,13 +683,13 @@ async function renameCategory(categoryId, name) {
   renderListFilters();
   renderCategoryManageList();
   renderEntryList();
-  showToast("宸查噸鍛藉悕");
+  showToast("已重命名");
 }
 
 async function removeCategory(categoryId) {
   const category = state.categories.find((item) => item.id === categoryId);
   if (!category) return;
-  const confirmed = await showCustomConfirm("鍒犻櫎绗旇鏈?, `纭畾瑕佸垹闄ょ瑪璁版湰銆?{category.name}銆嶅悧锛熷叾涓殑绗旇灏嗙Щ鍒伴粯璁ょ瑪璁版湰銆俙);
+  const confirmed = await showCustomConfirm("删除笔记本", `确定要删除笔记本「${category.name}」吗？其中的笔记将移到默认笔记本。`);
   if (!confirmed) return;
 
   await deleteCategory(categoryId);
@@ -712,7 +712,7 @@ async function removeCategory(categoryId) {
   renderCategoryManageList();
   renderEntryList();
   updateShellState();
-  showToast("宸插垹闄ょ瑪璁版湰");
+  showToast("已删除笔记本");
 }
 
 function renderCategoryManageList() {
@@ -722,7 +722,7 @@ function renderCategoryManageList() {
   if (state.categories.length === 0) {
     const empty = document.createElement("p");
     empty.className = "category-manage__empty";
-    empty.textContent = "杩樻病鏈夌瑪璁版湰锛屽湪涓婃柟杈撳叆鍚嶇О娣诲姞銆?;
+    empty.textContent = "还没有笔记本，在上方输入名称添加。";
     ui.categoryManageList.appendChild(empty);
     return;
   }
@@ -741,16 +741,16 @@ function renderCategoryManageList() {
     const renameBtn = document.createElement("button");
     renameBtn.type = "button";
     renameBtn.className = "category-manage__btn tap-scale";
-    renameBtn.textContent = "閲嶅懡鍚?;
+    renameBtn.textContent = "重命名";
     renameBtn.addEventListener("click", async () => {
-      const nextName = await showCustomPrompt("淇敼绗旇鏈悕绉?, category.name);
+      const nextName = await showCustomPrompt("修改笔记本名称", category.name);
       if (nextName != null) void renameCategory(category.id, nextName);
     });
 
     const deleteBtn = document.createElement("button");
     deleteBtn.type = "button";
     deleteBtn.className = "category-manage__btn category-manage__btn--danger tap-scale";
-    deleteBtn.textContent = "鍒犻櫎";
+    deleteBtn.textContent = "删除";
     deleteBtn.addEventListener("click", () => void removeCategory(category.id));
 
     actions.append(renameBtn, deleteBtn);
@@ -832,12 +832,12 @@ function renderListFilters() {
   ui.categoryTabs.innerHTML = "";
 
   const tabs = [
-    { id: "all", name: "鍏ㄩ儴" },
+    { id: "all", name: "全部" },
     ...state.categories.map((category) => ({
       id: `${CATEGORY_FILTER_PREFIX}${category.id}`,
       name: category.name
     })),
-    { id: "trash", name: "鏈€杩戝垹闄? }
+    { id: "trash", name: "最近删除" }
   ];
 
   tabs.forEach((tab) => {
@@ -854,8 +854,8 @@ function renderListFilters() {
   const manageBtn = document.createElement("button");
   manageBtn.type = "button";
   manageBtn.className = "category-tab category-tab--manage tap-scale";
-  manageBtn.setAttribute("aria-label", "绠＄悊绗旇鏈?);
-  manageBtn.title = "绠＄悊绗旇鏈?;
+  manageBtn.setAttribute("aria-label", "管理笔记本");
+  manageBtn.title = "管理笔记本";
   manageBtn.textContent = "+";
   manageBtn.addEventListener("click", openCategoryManageSheet);
   ui.categoryTabs.appendChild(manageBtn);
@@ -878,13 +878,13 @@ function renderEntryList() {
     const empty = document.createElement("div");
     empty.className = "empty-box";
     if (state.searchQuery) {
-      empty.innerHTML = "<strong>娌℃湁鍖归厤缁撴灉</strong>璇曡瘯鍏朵粬鍏抽敭璇嶏紝鎴栨竻绌烘悳绱€?;
+      empty.innerHTML = "<strong>没有匹配结果</strong>试试其他关键词，或清空搜索。";
     } else if (inTrash) {
-      empty.innerHTML = "<strong>鏈€杩戝垹闄や负绌?/strong>鍒犻櫎鐨勭瑪璁颁細鍑虹幇鍦ㄨ繖閲屻€?;
+      empty.innerHTML = "<strong>最近删除为空</strong>删除的笔记会出现在这里。";
     } else if (categoryName) {
-      empty.innerHTML = `<strong>銆?{categoryName}銆嶈繕娌℃湁绗旇</strong>鐐瑰彸涓嬭 + 鍦ㄦ绗旇鏈柊寤恒€俙;
+      empty.innerHTML = `<strong>「${categoryName}」还没有笔记</strong>点右下角 + 在此笔记本新建。`;
     } else {
-      empty.innerHTML = "<strong>杩樻病鏈夌瑪璁?/strong>鐐瑰彸涓嬭 + 寮€濮嬪啓銆?;
+      empty.innerHTML = "<strong>还没有笔记</strong>点右下角 + 开始写。";
     }
     ui.entryList.appendChild(empty);
     return;
@@ -909,7 +909,7 @@ function renderEntryList() {
     const categoryName = getCategoryName(entry.category_id);
     const timeLabel = inTrash
       ? `删除于 ${formatRelativeTime(entry.deleted_at)}`
-      : `${formatRelativeTime(entry.updated_at)}`;
+      : `${formatRelativeTime(entry.updated_at)} · ${countChars(entry.body)} 字`;
 
     const isPinned = Boolean(entry.is_pinned);
     const isSelected = state.multiSelect?.active && state.multiSelect.selectedIds.has(entry.id);
@@ -921,21 +921,25 @@ function renderEntryList() {
     const firstImgSrc = match ? match[1] : null;
     const imgHtml = firstImgSrc ? `<div class="entry-card__img-preview"><img src="${firstImgSrc}" alt="Note image" loading="lazy"></div>` : "";
 
+    const pinLabel = isPinned ? "取消置顶" : "置顶";
     card.innerHTML = `
       <div class="entry-card__actions" data-action="swipe-actions">${inTrash ? `<button type="button" class="entry-card__action entry-card__action--restore" data-swipe-action="restore">恢复</button>` : `<button type="button" class="entry-card__action entry-card__action--pin" data-swipe-action="pin">${pinLabel}</button><button type="button" class="entry-card__action entry-card__action--move" data-swipe-action="move">移动</button><button type="button" class="entry-card__action entry-card__action--delete" data-swipe-action="delete">删除</button>`}</div>
       <div class="entry-card__inner">
         <h3 class="entry-card__title"><span class="entry-card__title-text"></span></h3>
-        <div class="entry-card__meta entry-card__meta--compact">
-          <span class="entry-card__time"></span>
-          <span class="entry-card__preview"></span>
-        </div>
+        <p class="entry-card__preview"></p>
         ${imgHtml}
+        <div class="entry-card__meta">
+          <span class="entry-card__tag${categoryName ? "" : " is-hidden"}"></span>
+          <span class="entry-card__time"></span>
+        </div>
       </div>
       <div class="entry-card__checkbox ${checkedClass}"></div>
     `;
 
     card.querySelector(".entry-card__title-text").textContent = title;
-    card.querySelector(".entry-card__preview").textContent = preview || "无更多文本";
+    card.querySelector(".entry-card__preview").textContent = preview || "（空内容）";
+    const tag = card.querySelector(".entry-card__tag");
+    if (categoryName) tag.textContent = categoryName;
     card.querySelector(".entry-card__time").textContent = timeLabel;
 
     bindSwipe(card, entry.id, inTrash);
@@ -947,8 +951,8 @@ function renderEntryList() {
     const pinnedHeader = document.createElement("div");
     pinnedHeader.className = "entry-section-header entry-section-header--pinned" + (state.pinnedCollapsed ? " is-collapsed" : " is-expanded");
     pinnedHeader.innerHTML = `
-      <div class="entry-section-header__title">缃《</div>
-      <button type="button" class="entry-section-header__toggle" aria-label="灞曞紑鎴栨敹璧风疆椤?>
+      <div class="entry-section-header__title">置顶</div>
+      <button type="button" class="entry-section-header__toggle" aria-label="展开或收起置顶">
         <svg class="entry-section-header__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="6 9 12 15 18 9"></polyline>
         </svg>
@@ -973,7 +977,7 @@ function renderEntryList() {
     if (otherEntries.length > 0) {
       const othersHeader = document.createElement("div");
       othersHeader.className = "entry-section-header entry-section-header--others";
-      othersHeader.innerHTML = `<div class="entry-section-header__title">鍏朵粬绗旇</div>`;
+      othersHeader.innerHTML = `<div class="entry-section-header__title">其他笔记</div>`;
       ui.entryList.appendChild(othersHeader);
 
       otherEntries.forEach((entry, idx) => {
@@ -1174,7 +1178,7 @@ async function moveEntryQuick(entryId) {
   scheduleCloudPush();
 }
 
-// ======================== 澶氶€夊強缃《鎿嶄綔绯诲垪鏂规硶 ========================
+// ======================== 多选及置顶操作系列方法 ========================
 function enterMultiSelectMode(initialEntryId = null) {
   state.multiSelect.active = true;
   state.multiSelect.selectedIds.clear();
@@ -1226,21 +1230,21 @@ function updateMultiSelectUI() {
   const selectedCount = state.multiSelect.selectedIds.size;
   const titleEl = document.getElementById("multiSelectTitle");
   if (titleEl) {
-    titleEl.textContent = `宸查€夋嫨 ${selectedCount} 椤筦;
+    titleEl.textContent = `已选择 ${selectedCount} 项`;
   }
   
   const entries = filteredEntries();
   const allBtn = document.getElementById("multiSelectAllBtn");
   if (allBtn) {
     const allSelected = entries.length > 0 && entries.every(e => state.multiSelect.selectedIds.has(e.id));
-    allBtn.textContent = allSelected ? "鍙栨秷鍏ㄩ€? : "鍏ㄩ€?;
+    allBtn.textContent = allSelected ? "取消全选" : "全选";
   }
 
   const batchPinText = document.getElementById("batchPinText");
   if (batchPinText) {
     const selectedEntries = Array.from(state.multiSelect.selectedIds).map(id => state.entries.find(e => e.id === id)).filter(Boolean);
     const allPinned = selectedEntries.length > 0 && selectedEntries.every(e => e.is_pinned);
-    batchPinText.textContent = allPinned ? "鍙栨秷缃《" : "缃《";
+    batchPinText.textContent = allPinned ? "取消置顶" : "置顶";
   }
   
   document.querySelectorAll(".entry-card").forEach(card => {
@@ -1269,7 +1273,7 @@ function updateMoreMenuUI() {
   const viewModeByText = document.getElementById("viewModeText");
   const viewModeByIcon = document.getElementById("viewModeIcon");
   if (viewModeByText) {
-    viewModeByText.textContent = settings.layoutMode === "grid" ? "鍒楄〃妯″紡" : "瀹牸妯″紡";
+    viewModeByText.textContent = settings.layoutMode === "grid" ? "列表模式" : "宫格模式";
   }
   if (viewModeByIcon) {
     if (settings.layoutMode === "grid") {
@@ -1315,7 +1319,7 @@ function openBatchMoveSheet() {
   if (!listEl) return;
   listEl.innerHTML = "";
   
-  const targets = [{ id: "", name: "榛樿绗旇鏈? }, ...state.categories.map((item) => ({ id: item.id, name: item.name }))];
+  const targets = [{ id: "", name: "默认笔记本" }, ...state.categories.map((item) => ({ id: item.id, name: item.name }))];
   targets.forEach((target) => {
     const button = document.createElement("button");
     button.type = "button";
@@ -1346,7 +1350,7 @@ async function executeBatchMove(categoryId) {
   }
   
   closeActionSheet(document.getElementById("batchMoveSheet"));
-  showToast(categoryId ? "鎵归噺绉诲姩鎴愬姛" : "宸茬Щ鍒伴粯璁ょ瑪璁版湰");
+  showToast(categoryId ? "批量移动成功" : "已移到默认笔记本");
   exitMultiSelectMode();
   await reloadData();
   renderEntryList();
@@ -1368,7 +1372,7 @@ async function executeBatchPin() {
     });
   }
   
-  showToast(allPinned ? "宸插彇娑堢疆椤? : "宸茶涓虹疆椤?);
+  showToast(allPinned ? "已取消置顶" : "已设为置顶");
   exitMultiSelectMode();
   await reloadData();
   renderEntryList();
@@ -1380,9 +1384,9 @@ async function executeBatchDelete() {
   if (count === 0) return;
   
   const inTrash = state.listFilter === "trash";
-  const confirmMsg = inTrash ? `纭畾瑕佹案涔呭垹闄よ繖 ${count} 绡囩瑪璁板悧锛熷垹闄ゅ悗涓嶅彲鎭㈠銆俙 : `纭畾瑕佸皢杩?${count} 绡囩瑪璁扮Щ鍔ㄥ埌鏈€杩戝垹闄ゅ悧锛焋;
+  const confirmMsg = inTrash ? `确定要永久删除这 ${count} 篇笔记吗？删除后不可恢复。` : `确定要将这 ${count} 篇笔记移动到最近删除吗？`;
   
-  const confirmed = await showCustomConfirm(inTrash ? "姘镐箙鍒犻櫎" : "鍒犻櫎绗旇", confirmMsg);
+  const confirmed = await showCustomConfirm(inTrash ? "永久删除" : "删除笔记", confirmMsg);
   if (!confirmed) return;
   
   const selectedIds = Array.from(state.multiSelect.selectedIds);
@@ -1395,7 +1399,7 @@ async function executeBatchDelete() {
     }
   }
   
-  showToast(inTrash ? "宸叉案涔呭垹闄? : "宸茬Щ鍔ㄥ埌鏈€杩戝垹闄?);
+  showToast(inTrash ? "已永久删除" : "已移动到最近删除");
   exitMultiSelectMode();
   await reloadData();
   renderEntryList();
@@ -1498,7 +1502,7 @@ async function persistEditor(silent = false) {
   };
 
   await putEntry(next);
-  if (!silent) showToast("宸蹭繚瀛?, 1200);
+  if (!silent) showToast("已保存", 1200);
   scheduleCloudPush();
 }
 
@@ -1520,14 +1524,14 @@ function scheduleCloudPush() {
 }
 
 async function deleteEntry(entryId) {
-  const confirmed = await showCustomConfirm("鍒犻櫎绗旇", "纭畾瑕佸皢杩欐潯绗旇绉诲姩鍒版渶杩戝垹闄ゅ悧锛?);
+  const confirmed = await showCustomConfirm("删除笔记", "确定要将这条笔记移动到最近删除吗？");
   if (!confirmed) return;
   await markEntryDeleted(entryId);
   if (state.editorEntryId === entryId) await closeEditor();
   await reloadData();
   renderEntryList();
   scheduleCloudPush();
-  showToast("宸茬Щ鍒版渶杩戝垹闄?);
+  showToast("已移到最近删除");
 }
 
 async function restoreEntryById(entryId) {
@@ -1535,7 +1539,7 @@ async function restoreEntryById(entryId) {
   await reloadData();
   renderEntryList();
   scheduleCloudPush();
-  showToast("宸叉仮澶?);
+  showToast("已恢复");
 }
 
 function renderSettings() {
@@ -1548,31 +1552,31 @@ function renderSettings() {
 
 async function refreshSyncStatusText() {
   if (!isSyncConfigured()) {
-    ui.syncStatus.textContent = "灏氭湭閰嶇疆浜戠";
+    ui.syncStatus.textContent = "尚未配置云端";
     return;
   }
   const meta = await getLastSyncMeta();
-  const parts = ["宸查厤缃?Supabase"];
-  if (meta.lastPushAt) parts.push(`涓婃涓婁紶 ${formatRelativeTime(meta.lastPushAt)}`);
-  if (meta.lastPullAt) parts.push(`涓婃鎷夊彇 ${formatRelativeTime(meta.lastPullAt)}`);
-  ui.syncStatus.textContent = parts.join(" 路 ");
+  const parts = ["已配置 Supabase"];
+  if (meta.lastPushAt) parts.push(`上次上传 ${formatRelativeTime(meta.lastPushAt)}`);
+  if (meta.lastPullAt) parts.push(`上次拉取 ${formatRelativeTime(meta.lastPullAt)}`);
+  ui.syncStatus.textContent = parts.join(" · ");
 }
 
 async function runCloudSync(showFeedback = true) {
   if (!isSyncConfigured()) {
-    if (showFeedback) showToast("璇峰厛鍦ㄨ缃腑閰嶇疆 Supabase");
+    if (showFeedback) showToast("请先在设置中配置 Supabase");
     return;
   }
   try {
-    if (showFeedback) ui.syncStatus.textContent = "鍚屾涓€?;
+    if (showFeedback) ui.syncStatus.textContent = "同步中…";
     await pullRemote();
     await syncAllPending();
     await refreshSyncStatusText();
-    if (showFeedback) showToast("鍚屾瀹屾垚");
+    if (showFeedback) showToast("同步完成");
   } catch (error) {
     console.warn("Sync failed", error);
-    ui.syncStatus.textContent = `鍚屾澶辫触锛?{error.message || "鏈煡閿欒"}`;
-    if (showFeedback) showToast("鍚屾澶辫触锛屽唴瀹瑰凡淇濈暀鍦ㄦ湰鍦?);
+    ui.syncStatus.textContent = `同步失败：${error.message || "未知错误"}`;
+    if (showFeedback) showToast("同步失败，内容已保留在本地");
   }
 }
 
@@ -1582,18 +1586,18 @@ async function saveSyncSettings() {
     anonKey: ui.syncKeyInput.value
   });
   if (!isSyncConfigured()) {
-    showToast("璇峰～鍐欏畬鏁寸殑 URL 涓?Anon Key");
+    showToast("请填写完整的 URL 与 Anon Key");
     return;
   }
   try {
-    ui.syncStatus.textContent = "杩炴帴涓€?;
+    ui.syncStatus.textContent = "连接中…";
     const session = await ensureSession();
-    if (!session?.user?.id) throw new Error("鏃犳硶寤虹珛鍖垮悕浼氳瘽");
+    if (!session?.user?.id) throw new Error("无法建立匿名会话");
     await runCloudSync(true);
   } catch (error) {
     console.warn("Connect failed", error);
-    ui.syncStatus.textContent = `杩炴帴澶辫触锛?{error.message || "鏈煡閿欒"}`;
-    showToast("杩炴帴澶辫触锛岃妫€鏌ラ厤缃?);
+    ui.syncStatus.textContent = `连接失败：${error.message || "未知错误"}`;
+    showToast("连接失败，请检查配置");
   }
 }
 
@@ -1759,7 +1763,7 @@ function bindEvents() {
     }
   });
 
-  // 澶氶€夋壒閲忔搷浣滅浉鍏崇殑浜嬩欢澶勭悊
+  // 多选批量操作相关的事件处理
   document.getElementById("multiSelectCancelBtn")?.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -1771,7 +1775,7 @@ function bindEvents() {
   document.getElementById("batchPinBtn")?.addEventListener("click", () => void executeBatchPin());
   document.getElementById("batchDeleteBtn")?.addEventListener("click", () => void executeBatchDelete());
 
-  // 鏇村鎺掔増涓庤缃脊鍑鸿彍鍗?
+  // 更多排版与设置弹出菜单
   ui.moreMenuBtn?.addEventListener("click", (event) => {
     event.stopPropagation();
     if (ui.moreMenuPopover?.classList.contains("is-hidden")) {
@@ -1816,7 +1820,7 @@ function bindEvents() {
     }
   });
 
-  // 鎵归噺绉诲姩绗旇鏈殑鍏抽棴
+  // 批量移动笔记本的关闭
   document.getElementById("batchMoveSheet")?.addEventListener("click", (event) => {
     const closeId = event.target.closest("[data-close]")?.dataset.close;
     if (closeId) closeActionSheet(document.getElementById(closeId));
@@ -1841,7 +1845,7 @@ async function bootstrap() {
     initEditorController();
   } catch (error) {
     console.error("Editor init failed", error);
-    showToast("缂栬緫鍣ㄥ垵濮嬪寲澶辫触锛岃鍒锋柊椤甸潰");
+    showToast("编辑器初始化失败，请刷新页面");
   }
 
   registerServiceWorker();
@@ -1877,6 +1881,5 @@ async function bootstrap() {
 
 bootstrap().catch((error) => {
   console.error(error);
-  showToast("鍚姩澶辫触锛岃鍒锋柊椤甸潰");
+  showToast("启动失败，请刷新页面");
 });
-
