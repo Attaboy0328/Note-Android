@@ -2661,3 +2661,44 @@ html[data-skin="graphite"][data-theme="dark"] {
   --danger: #eb8a93;
   --nav-bg: color-mix(in srgb, var(--surface) 90%, var(--bg));
 }
+
+/* 长时阅读优化：新增 5 套主题 */
+html[data-skin="almond"] .editor-sheet__body,
+html[data-skin="sage"] .editor-sheet__body,
+html[data-skin="mist"] .editor-sheet__body,
+html[data-skin="lavender"] .editor-sheet__body,
+html[data-skin="graphite"] .editor-sheet__body {
+  line-height: 1.86;
+  letter-spacing: 0.018em;
+  font-weight: 420;
+}
+
+html[data-skin="almond"] .entry-card__preview,
+html[data-skin="sage"] .entry-card__preview,
+html[data-skin="mist"] .entry-card__preview,
+html[data-skin="lavender"] .entry-card__preview,
+html[data-skin="graphite"] .entry-card__preview {
+  line-height: 1.62;
+}
+
+html[data-skin="almond"] .entry-card__title,
+html[data-skin="sage"] .entry-card__title,
+html[data-skin="mist"] .entry-card__title,
+html[data-skin="lavender"] .entry-card__title,
+html[data-skin="graphite"] .entry-card__title {
+  font-weight: 590;
+}
+
+html[data-skin="mist"][data-theme="dark"] {
+  --text: #e6ddcf;
+  --muted: #b8ab98;
+  --accent: #a79072;
+  --accent-soft: rgba(167, 144, 114, 0.2);
+}
+
+html[data-skin="graphite"][data-theme="dark"] {
+  --text: #e8dfd2;
+  --muted: #b7aa97;
+  --accent: #a99272;
+  --accent-soft: rgba(169, 146, 114, 0.2);
+}
