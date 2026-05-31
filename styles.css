@@ -79,9 +79,10 @@ button:focus-visible {
   width: min(560px, 100%);
   margin: 0 auto;
   min-height: 100dvh;
-  padding: 16px 16px calc(96px + var(--safe-bottom));
+  padding: 16px 16px calc(124px + var(--safe-bottom));
   transition: transform 0.36s cubic-bezier(0.32, 0.94, 0.6, 1), opacity 0.36s cubic-bezier(0.32, 0.94, 0.6, 1), filter 0.36s cubic-bezier(0.32, 0.94, 0.6, 1);
   transform-origin: center top;
+  overflow: hidden;
 }
 
 body.editor-open .app-shell {
@@ -407,6 +408,7 @@ body.editor-open .app-shell {
 .entry-list {
   display: grid;
   gap: 10px;
+  padding-bottom: calc(20px + var(--safe-bottom));
 }
 
 .entry-card {
@@ -731,7 +733,7 @@ body.editor-open .mobile-nav {
   left: 50%;
   bottom: var(--safe-bottom);
   transform: translateX(-50%);
-  width: min(560px, calc(100% - 14px));
+  width: min(560px, calc(100% - 32px));
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4px;
@@ -2084,7 +2086,7 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
 }
 
 .mobile-nav__search {
-  flex: 0 1 calc(100% - 112px);
+  flex: 0 1 calc(100% - 136px);
   min-width: 0;
   height: 44px;
   border-radius: 999px;
