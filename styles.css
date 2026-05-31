@@ -428,7 +428,8 @@ body[data-screen="settings"] .mobile-nav {
 .entry-list {
   display: grid;
   gap: 10px;
-  padding-bottom: calc(184px + var(--safe-bottom));
+  padding-bottom: calc(220px + var(--safe-bottom));
+  margin-bottom: 10px;
 }
 
 .entry-list::after {
@@ -819,6 +820,19 @@ body.editor-open .mobile-nav {
   right: 14px;
   height: 10px;
   background: linear-gradient(to bottom, color-mix(in srgb, var(--bg) 0%, transparent), color-mix(in srgb, var(--bg) 96%, transparent));
+  pointer-events: none;
+}
+
+.mobile-nav::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: calc(-1 * (var(--safe-bottom) + 14px));
+  border-radius: inherit;
+  background: var(--nav-bg);
+  z-index: -1;
   pointer-events: none;
 }
 
