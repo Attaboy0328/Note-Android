@@ -1116,7 +1116,8 @@ function bindSwipe(card, entryId, inTrash) {
 
     if (state.multiSelect?.active) return;
 
-    card.classList.toggle("is-swiped", currentX <= -Math.max(24, Math.floor(swipeWidth * 0.35)));
+    // Lower threshold so swipe actions feel easier to reveal on mobile.
+    card.classList.toggle("is-swiped", currentX <= -Math.max(16, Math.floor(swipeWidth * 0.22)));
     if (state.swipe.activeId && state.swipe.activeId !== entryId) {
       document.querySelectorAll(".entry-card.is-swiped").forEach((node) => {
         if (node.dataset.entryId !== entryId) node.classList.remove("is-swiped");
@@ -1890,5 +1891,5 @@ bootstrap().catch((error) => {
   console.error(error);
   showToast("启动失败，请刷新页面");
 });
-    const swipeWidth = inTrash ? 64 : 188;
+    const swipeWidth = inTrash ? 56 : 162;
     card.style.setProperty("--swipe-width", `${swipeWidth}px`);
