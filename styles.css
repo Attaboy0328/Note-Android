@@ -166,6 +166,7 @@ body.editor-open .app-shell {
 .screen[data-screen="settings"] .topbar {
   justify-content: flex-start;
   gap: 10px;
+  margin-top: -2px;
 }
 
 .screen[data-screen="settings"] .topbar__copy {
