@@ -533,7 +533,8 @@ body[data-screen="settings"] .mobile-nav {
   bottom: 0;
   width: 188px;
   display: flex;
-  transform: translateX(100%);
+  transform: none;
+  z-index: 1;
 }
 
 .entry-card__action {
