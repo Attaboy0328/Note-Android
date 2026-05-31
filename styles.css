@@ -2055,6 +2055,53 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
   gap: 8px;
 }
 
+#searchToggleBtn {
+  display: none !important;
+}
+
+.mobile-nav--ios {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+}
+
+.mobile-nav--ios .mobile-nav__indicator {
+  display: none;
+}
+
+.mobile-nav__search {
+  flex: 1;
+  height: 46px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  background: color-mix(in srgb, var(--text) 6%, var(--surface));
+  color: var(--muted);
+}
+
+.mobile-nav__search input {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  outline: none;
+  color: var(--text);
+  font-size: 16px;
+}
+
+.mobile-nav__action {
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  border: 0;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--text) 6%, var(--surface));
+  color: var(--text);
+}
+
 /* 弹出菜单样式 */
 .popover-menu {
   position: fixed;

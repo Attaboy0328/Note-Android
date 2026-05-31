@@ -48,6 +48,9 @@ const ui = {
   searchBar: document.getElementById("searchBar"),
   searchInput: document.getElementById("searchInput"),
   searchClearBtn: document.getElementById("searchClearBtn"),
+  bottomSearchInput: document.getElementById("bottomSearchInput"),
+  bottomAddBtn: document.getElementById("bottomAddBtn"),
+  bottomSettingsBtn: document.getElementById("bottomSettingsBtn"),
   editorSheet: document.getElementById("editorSheet"),
   editorBackBtn: document.getElementById("editorBackBtn"),
   editorShareBtn: document.getElementById("editorShareBtn"),
@@ -1515,19 +1518,29 @@ function bindEvents() {
   });
 
   ui.fabAddBtn?.addEventListener("click", () => void openEditor());
+  ui.bottomAddBtn?.addEventListener("click", () => void openEditor());
+  ui.bottomSettingsBtn?.addEventListener("click", () => switchScreen("settings"));
 
-  ui.searchToggleBtn.addEventListener("click", () => {
+  ui.searchToggleBtn?.addEventListener("click", () => {
     ui.searchBar.classList.toggle("is-hidden");
     if (!ui.searchBar.classList.contains("is-hidden")) ui.searchInput.focus();
   });
 
   ui.searchInput.addEventListener("input", () => {
     state.searchQuery = ui.searchInput.value;
+    if (ui.bottomSearchInput) ui.bottomSearchInput.value = ui.searchInput.value;
+    renderEntryList();
+  });
+
+  ui.bottomSearchInput?.addEventListener("input", () => {
+    state.searchQuery = ui.bottomSearchInput.value;
+    if (ui.searchInput) ui.searchInput.value = ui.bottomSearchInput.value;
     renderEntryList();
   });
 
   ui.searchClearBtn.addEventListener("click", () => {
     ui.searchInput.value = "";
+    if (ui.bottomSearchInput) ui.bottomSearchInput.value = "";
     state.searchQuery = "";
     renderEntryList();
   });
