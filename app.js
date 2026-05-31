@@ -1615,11 +1615,8 @@ function bindEvents() {
   ui.bottomAddBtn?.addEventListener("click", () => void openEditor());
   ui.bottomSettingsBtn?.addEventListener("click", (event) => {
     event.stopPropagation();
-    if (ui.moreMenuPopover?.classList.contains("is-hidden")) {
-      openMoreMenu();
-    } else {
-      closeMoreMenu();
-    }
+    closeMoreMenu();
+    switchScreenWithHistory("settings");
   });
   ui.settingsBackBtn?.addEventListener("click", () => {
     if (history.state?.noteScreenSettings) {
