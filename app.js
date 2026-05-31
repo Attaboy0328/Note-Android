@@ -51,6 +51,7 @@ const ui = {
   bottomSearchInput: document.getElementById("bottomSearchInput"),
   bottomAddBtn: document.getElementById("bottomAddBtn"),
   bottomSettingsBtn: document.getElementById("bottomSettingsBtn"),
+  settingsBackBtn: document.getElementById("settingsBackBtn"),
   editorSheet: document.getElementById("editorSheet"),
   editorBackBtn: document.getElementById("editorBackBtn"),
   editorShareBtn: document.getElementById("editorShareBtn"),
@@ -775,6 +776,14 @@ function switchScreen(screen) {
   });
   updateShellState();
   if (screen === "settings") renderSettings();
+}
+
+function switchScreenWithHistory(screen) {
+  if (state.activeScreen === screen) return;
+  if (screen === "settings" && state.activeScreen === "notes" && !history.state?.noteScreenSettings) {
+    history.pushState({ noteScreenSettings: true }, "");
+  }
+  switchScreen(screen);
 }
 
 function renderListFilters() {
@@ -1513,7 +1522,7 @@ function bindEvents() {
   ui.navItems.forEach((button) => {
     button.addEventListener("click", () => {
       blurActiveElement();
-      switchScreen(button.dataset.screen || "notes");
+      switchScreenWithHistory(button.dataset.screen || "notes");
     });
   });
 
@@ -1526,6 +1535,13 @@ function bindEvents() {
     } else {
       closeMoreMenu();
     }
+  });
+  ui.settingsBackBtn?.addEventListener("click", () => {
+    if (history.state?.noteScreenSettings) {
+      history.back();
+      return;
+    }
+    switchScreen("notes");
   });
 
   ui.searchToggleBtn?.addEventListener("click", () => {
@@ -1576,6 +1592,10 @@ function bindEvents() {
     }
     if (document.body.classList.contains("editor-open")) {
       void closeEditor({ fromPopstate: true });
+      return;
+    }
+    if (state.activeScreen === "settings") {
+      switchScreen("notes");
     }
   });
 
@@ -1623,7 +1643,7 @@ function bindEvents() {
       openActionSheet(ui.editorMoveSheet);
     }
     if (action === "app-settings") {
-      void closeEditor().then(() => switchScreen("settings"));
+      void closeEditor().then(() => switchScreenWithHistory("settings"));
     }
   });
 
@@ -1696,7 +1716,7 @@ function bindEvents() {
       closeMoreMenu();
     } else if (action === "menu-settings") {
       closeMoreMenu();
-      switchScreen("settings");
+      switchScreenWithHistory("settings");
     } else if (action === "menu-sort-created") {
       settings.sortField = "created_at";
       saveSettings();

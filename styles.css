@@ -2108,6 +2108,7 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
   line-height: 42px;
   padding: 0;
   margin: 0;
+  text-indent: -2px;
 }
 
 .mobile-nav__action {
@@ -2124,6 +2125,10 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
 
 #bottomSettingsBtn {
   display: grid !important;
+}
+
+#bottomSettingsBtn svg {
+  transform: translateY(0.5px);
 }
 
 /* 弹出菜单样式 */
