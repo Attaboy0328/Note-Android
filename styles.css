@@ -117,7 +117,7 @@ body.editor-open .app-shell {
 
 .topbar {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 16px;
@@ -161,6 +161,25 @@ body.editor-open .app-shell {
   font-size: 1.65rem;
   font-weight: 700;
   letter-spacing: -0.02em;
+}
+
+.screen[data-screen="settings"] .topbar {
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.screen[data-screen="settings"] .topbar__copy {
+  display: flex;
+  align-items: center;
+}
+
+.screen[data-screen="settings"] .topbar h1 {
+  font-size: 1.5rem;
+  line-height: 1.15;
+}
+
+body[data-screen="settings"] .mobile-nav {
+  display: none !important;
 }
 
 .icon-btn {
