@@ -2076,6 +2076,7 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
   background: color-mix(in srgb, var(--surface) 94%, transparent);
   backdrop-filter: saturate(140%) blur(10px);
   -webkit-backdrop-filter: saturate(140%) blur(10px);
+  justify-content: space-between;
 }
 
 .mobile-nav--ios .mobile-nav__indicator {
@@ -2083,7 +2084,8 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
 }
 
 .mobile-nav__search {
-  flex: 1;
+  flex: 0 1 calc(100% - 112px);
+  min-width: 0;
   height: 44px;
   border-radius: 999px;
   display: flex;
@@ -2104,6 +2106,7 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
 }
 
 .mobile-nav__action {
+  flex: 0 0 44px;
   width: 44px;
   height: 44px;
   border-radius: 999px;
