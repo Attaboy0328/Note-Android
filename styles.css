@@ -509,26 +509,43 @@ body[data-screen="settings"] .mobile-nav {
   display: none;
 }
 
-.entry-card__action {
+.entry-card__actions {
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
-  width: 84px;
-  display: grid;
-  place-items: center;
-  background: var(--danger);
-  color: #fff;
-  font-weight: 600;
+  width: 188px;
+  display: flex;
   transform: translateX(100%);
 }
 
-.entry-card[data-trash="true"] .entry-card__action {
+.entry-card__action {
+  flex: 1;
+  border: 0;
+  color: #fff;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.entry-card__action--pin {
+  background: #5f7694;
+}
+
+.entry-card__action--move {
+  background: #8a6f4a;
+}
+
+.entry-card__action--delete {
+  background: var(--danger);
+}
+
+.entry-card__action--restore {
+  width: 100%;
   background: var(--accent);
 }
 
 .entry-card.is-swiped .entry-card__inner {
-  transform: translateX(-84px);
+  transform: translateX(-188px);
 }
 
 .empty-box {
