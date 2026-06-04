@@ -1158,8 +1158,12 @@ function bindSwipe(card, entryId, inTrash) {
         state.swipe.activeId = null;
         return;
       }
-      if (inTrash) void restoreEntryById(entryId);
-      else void openEditor(entryId);
+      if (inTrash) {
+        // Trash items should only restore from the explicit swipe action.
+        state.swipe.activeId = null;
+        return;
+      }
+      void openEditor(entryId);
       return;
     }
 
