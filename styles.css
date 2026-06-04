@@ -2893,3 +2893,53 @@ html[data-skin="blue"][data-theme="dark"] {
   --accent: #a89071;
   --accent-soft: rgba(168, 144, 113, 0.2);
 }
+
+.entry-list.is-grid .entry-card {
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  min-height: 128px;
+}
+
+.entry-list.is-grid .entry-card__inner {
+  min-height: 128px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.entry-list.is-grid .entry-card__title {
+  margin-bottom: 10px;
+  font-size: 16px;
+  line-height: 1.36;
+  max-height: calc(1.36em * 2);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.entry-list.is-grid .entry-card__meta--compact {
+  display: block;
+  font-size: 13px;
+  line-height: 1.36;
+}
+
+.entry-list.is-grid .entry-card__meta--compact .entry-card__time {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.entry-list.is-grid .entry-card__meta--compact .entry-card__preview {
+  display: -webkit-box;
+  max-height: calc(1.36em * 2);
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  line-height: 1.36;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
