@@ -600,16 +600,18 @@ body[data-screen="settings"] .mobile-nav {
 }
 
 .entry-card__action--restore {
-  width: calc(var(--swipe-width, 112px) / 2);
+  width: auto;
+  flex: 1 1 50%;
   background: #8f7755;
 }
 
 .entry-card[data-trash="true"] .entry-card__action--delete {
-  width: calc(var(--swipe-width, 112px) / 2);
+  width: auto;
+  flex: 1 1 50%;
 }
 
 .entry-card[data-trash="true"] .entry-card__action {
-  flex: 1 0 50%;
+  flex: 1 1 50%;
 }
 
 .entry-card.is-swiped .entry-card__inner {
