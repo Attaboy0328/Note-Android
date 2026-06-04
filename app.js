@@ -976,7 +976,7 @@ function renderEntryList() {
 
     const pinLabel = isPinned ? "取消置顶" : "置顶";
     card.innerHTML = `
-      <div class="entry-card__actions" data-action="swipe-actions">${inTrash ? `<button type="button" class="entry-card__action entry-card__action--restore" data-swipe-action="restore">恢复</button>` : `<button type="button" class="entry-card__action entry-card__action--pin" data-swipe-action="pin">${pinLabel}</button><button type="button" class="entry-card__action entry-card__action--move" data-swipe-action="move">移动</button><button type="button" class="entry-card__action entry-card__action--delete" data-swipe-action="delete">删除</button>`}</div>
+      <div class="entry-card__actions" data-action="swipe-actions">${inTrash ? `<button type="button" class="entry-card__action entry-card__action--restore" data-swipe-action="restore">恢复</button><button type="button" class="entry-card__action entry-card__action--delete" data-swipe-action="delete-permanent">永久删除</button>` : `<button type="button" class="entry-card__action entry-card__action--pin" data-swipe-action="pin">${pinLabel}</button><button type="button" class="entry-card__action entry-card__action--move" data-swipe-action="move">移动</button><button type="button" class="entry-card__action entry-card__action--delete" data-swipe-action="delete">删除</button>`}</div>
       <div class="entry-card__inner">
         <h3 class="entry-card__title"><span class="entry-card__title-text"></span></h3>
         <div class="entry-card__meta entry-card__meta--compact">
@@ -1159,8 +1159,9 @@ function bindSwipe(card, entryId, inTrash) {
         return;
       }
       if (inTrash) {
-        // Trash items should only restore from the explicit swipe action.
-        state.swipe.activeId = null;
+        // In trash, a tap should reveal management actions instead of opening the note.
+        card.classList.add("is-swiped");
+        state.swipe.activeId = entryId;
         return;
       }
       void openEditor(entryId);
@@ -1193,6 +1194,7 @@ function bindSwipe(card, entryId, inTrash) {
     if (!btn) return;
     const action = btn.dataset.swipeAction;
     if (action === "restore") return void restoreEntryById(entryId);
+    if (action === "delete-permanent") return void deleteEntryPermanent(entryId);
     if (action === "delete") return void deleteEntry(entryId);
     if (action === "pin") return void togglePinEntry(entryId);
     if (action === "move") return void moveEntryQuick(entryId);
@@ -1976,5 +1978,5 @@ bootstrap().catch((error) => {
   console.error(error);
   showToast("启动失败，请刷新页面");
 });
-    const swipeWidth = inTrash ? 56 : 162;
+    const swipeWidth = inTrash ? 112 : 162;
     card.style.setProperty("--swipe-width", `${swipeWidth}px`);
