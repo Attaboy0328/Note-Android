@@ -1,7 +1,7 @@
 {
   "name": "Note",
   "short_name": "Note",
-  "description": "极简文字记录：小说素材与心得体会。",
+  "description": "\u6781\u7b80\u6587\u5b57\u8bb0\u5f55\uff1a\u7b14\u8bb0\u3001\u7075\u611f\u4e0e\u9605\u8bfb\u6458\u5f55\u3002",
   "id": "./",
   "start_url": "./?source=pwa",
   "scope": "./",
@@ -34,9 +34,9 @@
   ],
   "shortcuts": [
     {
-      "name": "快速记录",
-      "short_name": "记录",
-      "description": "新建一条文字记录",
+      "name": "\u5feb\u901f\u8bb0\u5f55",
+      "short_name": "\u8bb0\u5f55",
+      "description": "\u65b0\u5efa\u4e00\u6761\u6587\u5b57\u7b14\u8bb0",
       "url": "./?new=1&source=shortcut",
       "icons": [{ "src": "icons/icon-192.png?v=2", "sizes": "192x192" }]
     }

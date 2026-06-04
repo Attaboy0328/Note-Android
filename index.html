@@ -16,7 +16,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;600&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=16">
+  <link rel="stylesheet" href="styles.css?v=17">
 </head>
 <body>
   <div class="sync-toast is-hidden" id="syncToast" role="status" aria-live="polite"></div>
@@ -26,13 +26,13 @@
       <section class="screen is-active" data-screen="notes">
         <header class="topbar" id="normalTopbar">
           <div class="topbar__copy">
-            <h1>笔记</h1>
+            <h1>Note</h1>
           </div>
           <div class="topbar__actions">
-            <button type="button" id="searchToggleBtn" class="icon-btn tap-scale" aria-label="搜索">
+            <button type="button" id="searchToggleBtn" class="icon-btn tap-scale" aria-label="Search">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
             </button>
-            <button type="button" id="moreMenuBtn" class="icon-btn tap-scale" aria-label="更多选项">
+            <button type="button" id="moreMenuBtn" class="icon-btn tap-scale" aria-label="More options">
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                 <circle cx="12" cy="5" r="1.5" fill="currentColor"/>
                 <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
@@ -44,37 +44,36 @@
 
         <header class="topbar multi-select-topbar is-hidden" id="multiSelectTopbar">
           <div class="multi-select-topbar__row">
-            <button type="button" id="multiSelectCancelBtn" class="multi-select-topbar__cancel">取消</button>
-            <button type="button" id="multiSelectAllBtn" class="multi-select-topbar__all">全选</button>
+            <button type="button" id="multiSelectCancelBtn" class="multi-select-topbar__cancel">Cancel</button>
+            <button type="button" id="multiSelectAllBtn" class="multi-select-topbar__all">Select all</button>
           </div>
           <div class="multi-select-topbar__title-wrapper">
-            <h1 class="multi-select-topbar__title" id="multiSelectTitle">已选择 0 项</h1>
+            <h1 class="multi-select-topbar__title" id="multiSelectTitle">Selected 0</h1>
           </div>
         </header>
 
         <div class="search-bar is-hidden" id="searchBar">
-          <input id="searchInput" type="search" placeholder="搜索标题或正文..." autocomplete="off" enterkeyhint="search">
-          <button type="button" id="searchClearBtn" class="search-bar__clear tap-scale" aria-label="清除搜索">×</button>
+          <input id="searchInput" type="search" placeholder="Search notes..." autocomplete="off" enterkeyhint="search">
+          <button type="button" id="searchClearBtn" class="search-bar__clear tap-scale" aria-label="Clear search">x</button>
         </div>
 
-        <div class="category-tabs" id="categoryTabs" role="tablist" aria-label="列表筛选"></div>
-
+        <div class="category-tabs" id="categoryTabs" role="tablist" aria-label="List filters"></div>
         <div class="entry-list" id="entryList"></div>
       </section>
 
       <section class="screen" data-screen="settings">
         <header class="topbar">
-          <button type="button" id="settingsBackBtn" class="icon-btn tap-scale" aria-label="返回笔记">
+          <button type="button" id="settingsBackBtn" class="icon-btn tap-scale" aria-label="Back to notes">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
           </button>
           <div class="topbar__copy">
-            <h1>设置</h1>
+            <h1>Settings</h1>
           </div>
         </header>
 
         <section class="card">
-          <h2 class="card__title">云端同步</h2>
-          <p class="card__hint">使用独立的 Supabase 项目，与 Habit 无关。启用 Anonymous 登录后填入 URL 与 Anon Key。</p>
+          <h2 class="card__title">Cloud Sync</h2>
+          <p class="card__hint">Connect Supabase project.</p>
           <label class="field">
             <span>Project URL</span>
             <input id="syncUrlInput" type="url" placeholder="https://xxxx.supabase.co" autocomplete="off">
@@ -84,232 +83,231 @@
             <input id="syncKeyInput" type="password" placeholder="eyJ..." autocomplete="off">
           </label>
           <div class="btn-row">
-            <button type="button" id="saveSyncBtn" class="btn-primary tap-scale">保存并连接</button>
-            <button type="button" id="syncNowBtn" class="btn-ghost tap-scale">立即同步</button>
+            <button type="button" id="saveSyncBtn" class="btn-primary tap-scale">Save</button>
+            <button type="button" id="syncNowBtn" class="btn-ghost tap-scale">Sync now</button>
           </div>
-          <p class="sync-status" id="syncStatus">尚未配置云端</p>
+          <p class="sync-status" id="syncStatus">Not configured</p>
         </section>
 
         <section class="card">
-          <h2 class="card__title">笔记本</h2>
-          <p class="card__hint">创建、重命名或删除笔记本，与笔记列表顶栏同步。</p>
-          <button type="button" id="manageCategoriesBtn" class="btn-ghost tap-scale">管理笔记本</button>
+          <h2 class="card__title">Notebooks</h2>
+          <p class="card__hint">Create, rename or delete notebooks.</p>
+          <button type="button" id="manageCategoriesBtn" class="btn-ghost tap-scale">Manage notebooks</button>
         </section>
 
         <section class="card appearance-card">
-          <h2 class="card__title">外观</h2>
-          <p class="card__hint">阅读配色与明暗模式，笔记内外同步生效。</p>
-          <div class="theme-mode" id="settingsThemeMode" role="group" aria-label="明暗模式">
-            <button type="button" class="theme-mode__btn tap-scale" data-theme-mode="light" aria-pressed="true">浅色</button>
-            <button type="button" class="theme-mode__btn tap-scale" data-theme-mode="dark" aria-pressed="false">深色</button>
+          <h2 class="card__title">Appearance</h2>
+          <p class="card__hint">Theme and reading palette.</p>
+          <div class="theme-mode" id="settingsThemeMode" role="group" aria-label="Theme mode">
+            <button type="button" class="theme-mode__btn tap-scale" data-theme-mode="light" aria-pressed="true">Light</button>
+            <button type="button" class="theme-mode__btn tap-scale" data-theme-mode="dark" aria-pressed="false">Dark</button>
           </div>
-          <div class="skin-grid skin-grid--settings" id="settingsSkinGrid" aria-label="阅读配色"></div>
+          <div class="skin-grid skin-grid--settings" id="settingsSkinGrid" aria-label="Reading palette"></div>
         </section>
 
         <section class="card">
-          <h2 class="card__title">安装 App</h2>
-          <p class="card__hint" id="installHint">可将 Note 添加到主屏幕，获得更接近原生应用的体验。</p>
+          <h2 class="card__title">Install App</h2>
+          <p class="card__hint" id="installHint">Install Note as an app.</p>
           <div class="btn-row">
-            <button type="button" id="installAppBtn" class="btn-primary tap-scale">安装 App</button>
+            <button type="button" id="installAppBtn" class="btn-primary tap-scale">Install App</button>
           </div>
         </section>
       </section>
     </main>
   </div>
 
-  <button type="button" id="fabAddBtn" class="fab tap-scale is-hidden" aria-label="新建笔记">
+  <button type="button" id="fabAddBtn" class="fab tap-scale is-hidden" aria-label="New note">
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
   </button>
 
-  <nav class="mobile-nav mobile-nav--ios" aria-label="主导航">
+  <nav class="mobile-nav mobile-nav--ios" aria-label="Main navigation">
     <div class="mobile-nav__indicator" id="mobileNavIndicator"></div>
-    <button type="button" class="mobile-nav__item is-active is-hidden" data-screen="notes" aria-label="笔记">
+    <button type="button" class="mobile-nav__item is-active is-hidden" data-screen="notes" aria-label="Notes">
       <svg class="mobile-nav__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg>
-      <span>笔记</span>
+      <span>Notes</span>
     </button>
-    <button type="button" class="mobile-nav__item is-hidden" data-screen="settings" aria-label="设置">
+    <button type="button" class="mobile-nav__item is-hidden" data-screen="settings" aria-label="Settings">
       <svg class="mobile-nav__icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-      <span>设置</span>
+      <span>Settings</span>
     </button>
     <div class="mobile-nav__search">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3-3"/></svg>
-      <input id="bottomSearchInput" type="search" placeholder="搜索" autocomplete="off" enterkeyhint="search">
+      <input id="bottomSearchInput" type="search" placeholder="Search" autocomplete="off" enterkeyhint="search">
     </div>
-    <button type="button" id="bottomAddBtn" class="mobile-nav__action tap-scale" aria-label="新建笔记">
+    <button type="button" id="bottomAddBtn" class="mobile-nav__action tap-scale" aria-label="New note">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
     </button>
-    <button type="button" id="bottomSettingsBtn" class="mobile-nav__action tap-scale" aria-label="设置">
+    <button type="button" id="bottomSettingsBtn" class="mobile-nav__action tap-scale" aria-label="Settings">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
     </button>
   </nav>
 
   <div id="editorSheet" class="editor-sheet is-hidden" aria-hidden="true">
     <header class="editor-sheet__head">
-      <button type="button" id="editorBackBtn" class="icon-btn tap-scale" aria-label="返回">
+      <button type="button" id="editorBackBtn" class="icon-btn tap-scale" aria-label="Back">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
       </button>
       <div class="editor-sheet__head-actions">
-        <button type="button" id="editorShareBtn" class="icon-btn tap-scale" aria-label="分享">
+        <button type="button" id="editorShareBtn" class="icon-btn tap-scale" aria-label="Share">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 3.9M15.4 6.6L8.6 10.5"/></svg>
         </button>
-        <button type="button" id="editorMoreBtn" class="icon-btn tap-scale" aria-label="更多">
+        <button type="button" id="editorMoreBtn" class="icon-btn tap-scale" aria-label="More">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="5" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="19" r="1.5" fill="currentColor"/></svg>
         </button>
-        <button type="button" id="editorDeleteBtn" class="icon-btn icon-btn--danger tap-scale" aria-label="删除">
+        <button type="button" id="editorDeleteBtn" class="icon-btn icon-btn--danger tap-scale" aria-label="Delete">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>
         </button>
       </div>
     </header>
 
     <div class="editor-find is-hidden" id="editorFindBar">
-      <input id="editorFindInput" type="search" placeholder="查找笔记内容…" enterkeyhint="search" autocomplete="off">
-      <button type="button" id="editorFindNextBtn" class="editor-find__btn tap-scale">下一个</button>
-      <button type="button" id="editorFindCloseBtn" class="editor-find__btn tap-scale" aria-label="关闭">×</button>
+      <input id="editorFindInput" type="search" placeholder="Find in note..." enterkeyhint="search" autocomplete="off">
+      <button type="button" id="editorFindNextBtn" class="editor-find__btn tap-scale">Next</button>
+      <button type="button" id="editorFindCloseBtn" class="editor-find__btn tap-scale" aria-label="Close">x</button>
     </div>
 
     <div id="editorBody" class="editor-sheet__body" contenteditable="true" role="textbox" aria-multiline="true" spellcheck="true"></div>
 
     <div class="editor-toolbar-wrap">
-    <div class="editor-toolbar" id="editorToolbar" role="toolbar" aria-label="编辑工具">
-      <div class="editor-toolbar__group">
-        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="undo" aria-label="撤销" disabled>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 7H5v4"/><path d="M5 11c1.5-3 4.5-5 8-5 4.4 0 8 3.6 8 8s-3.6 8-8 8a8 8 0 01-5.3-2"/></svg>
-        </button>
-        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="redo" aria-label="重做" disabled>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 7h4v4"/><path d="M19 11c-1.5-3-4.5-5-8-5-4.4 0-8 3.6-8 8s3.6 8 8 8a8 8 0 005.3-2"/></svg>
-        </button>
+      <div class="editor-toolbar" id="editorToolbar" role="toolbar" aria-label="Editor tools">
+        <div class="editor-toolbar__group">
+          <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="undo" aria-label="Undo" disabled>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 7H5v4"/><path d="M5 11c1.5-3 4.5-5 8-5 4.4 0 8 3.6 8 8s-3.6 8-8 8a8 8 0 01-5.3-2"/></svg>
+          </button>
+          <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="redo" aria-label="Redo" disabled>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 7h4v4"/><path d="M19 11c-1.5-3-4.5-5-8-5-4.4 0-8 3.6-8 8s3.6 8 8 8a8 8 0 005.3-2"/></svg>
+          </button>
+        </div>
+        <span class="editor-toolbar__sep" aria-hidden="true"></span>
+        <div class="editor-toolbar__group">
+          <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="done" aria-label="Done">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+          <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="timestamp" aria-label="Insert time">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+          </button>
+        </div>
+        <span class="editor-toolbar__sep" aria-hidden="true"></span>
+        <div class="editor-toolbar__group">
+          <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="bullet" aria-label="Bulleted list">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4" cy="6" r="1" fill="currentColor"/><circle cx="4" cy="12" r="1" fill="currentColor"/><circle cx="4" cy="18" r="1" fill="currentColor"/></svg>
+          </button>
+          <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="ordered" aria-label="Numbered list">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10 6h10M10 12h10M10 18h10"/><path d="M4 6h1M4 12h1M4 18h1"/></svg>
+          </button>
+          <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="checklist" aria-label="Checklist">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="6" height="6" rx="1"/><path d="M9 8h12M3 17h6M9 17h12"/><rect x="3" y="14" width="6" height="6" rx="1"/></svg>
+          </button>
+        </div>
+        <span class="editor-toolbar__sep" aria-hidden="true"></span>
+        <div class="editor-toolbar__group">
+          <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="bold" aria-label="Bold"><strong>B</strong></button>
+          <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="italic" aria-label="Italic"><em>I</em></button>
+          <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="underline" aria-label="Underline"><u>U</u></button>
+          <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="strike" aria-label="Strike"><s>S</s></button>
+          <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="highlight" aria-label="Highlight">Hi</button>
+        </div>
+        <span class="editor-toolbar__sep" aria-hidden="true"></span>
+        <div class="editor-toolbar__group">
+          <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="h1" aria-label="Heading 1">H1</button>
+          <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="h2" aria-label="Heading 2">H2</button>
+          <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="quote" aria-label="Quote">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 7h4v4H7zM13 7h4v4h-4z"/></svg>
+          </button>
+          <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="hr" aria-label="Divider">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 12h16"/></svg>
+          </button>
+        </div>
+        <span class="editor-toolbar__sep" aria-hidden="true"></span>
+        <div class="editor-toolbar__group">
+          <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="indent" aria-label="Indent">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h16"/><path d="M18 10l2 2-2 2"/></svg>
+          </button>
+          <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="outdent" aria-label="Outdent">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h16"/><path d="M16 10l-2 2 2 2"/></svg>
+          </button>
+          <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="selectAll" aria-label="Select all">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 9h6v6H9z"/></svg>
+          </button>
+        </div>
       </div>
-      <span class="editor-toolbar__sep" aria-hidden="true"></span>
-      <div class="editor-toolbar__group">
-        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="done" aria-label="完成">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
-        </button>
-        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="timestamp" aria-label="插入时间">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-        </button>
-      </div>
-      <span class="editor-toolbar__sep" aria-hidden="true"></span>
-      <div class="editor-toolbar__group">
-        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="bullet" aria-label="无序列表">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4" cy="6" r="1" fill="currentColor"/><circle cx="4" cy="12" r="1" fill="currentColor"/><circle cx="4" cy="18" r="1" fill="currentColor"/></svg>
-        </button>
-        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="ordered" aria-label="有序列表">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M10 6h10M10 12h10M10 18h10"/><path d="M4 6h1M4 12h1M4 18h1"/></svg>
-        </button>
-        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="checklist" aria-label="待办列表">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="6" height="6" rx="1"/><path d="M9 8h12M3 17h6M9 17h12"/><rect x="3" y="14" width="6" height="6" rx="1"/></svg>
-        </button>
-      </div>
-      <span class="editor-toolbar__sep" aria-hidden="true"></span>
-      <div class="editor-toolbar__group">
-        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="bold" aria-label="粗体"><strong>B</strong></button>
-        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="italic" aria-label="斜体"><em>I</em></button>
-        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="underline" aria-label="下划线"><u>U</u></button>
-        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="strike" aria-label="删除线"><s>S</s></button>
-        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="highlight" aria-label="高亮">高亮</button>
-      </div>
-      <span class="editor-toolbar__sep" aria-hidden="true"></span>
-      <div class="editor-toolbar__group">
-        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="h1" aria-label="一级标题">H1</button>
-        <button type="button" class="editor-toolbar__btn editor-toolbar__btn--text tap-scale" data-cmd="h2" aria-label="二级标题">H2</button>
-        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="quote" aria-label="引用">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 7h4v4H7zM13 7h4v4h-4z"/></svg>
-        </button>
-        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="hr" aria-label="分隔线">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 12h16"/></svg>
-        </button>
-      </div>
-      <span class="editor-toolbar__sep" aria-hidden="true"></span>
-      <div class="editor-toolbar__group">
-        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="indent" aria-label="增加缩进">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h16"/><path d="M18 10l2 2-2 2"/></svg>
-        </button>
-        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="outdent" aria-label="减少缩进">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h16"/><path d="M16 10l-2 2 2 2"/></svg>
-        </button>
-        <button type="button" class="editor-toolbar__btn tap-scale" data-cmd="selectAll" aria-label="全选">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M9 9h6v6H9z"/></svg>
-        </button>
-      </div>
-    </div>
     </div>
 
     <div class="action-sheet is-hidden" id="editorMoreSheet" aria-hidden="true">
-      <button type="button" class="action-sheet__backdrop" data-close="editorMoreSheet" aria-label="关闭"></button>
-      <div class="action-sheet__panel" role="dialog" aria-label="更多">
-        <button type="button" class="action-sheet__item tap-scale" data-action="find">查找</button>
-        <button type="button" class="action-sheet__item tap-scale" data-action="skin">皮肤</button>
-        <button type="button" class="action-sheet__item tap-scale" data-action="move">移动</button>
-        <button type="button" class="action-sheet__item tap-scale" data-action="app-settings">设置</button>
+      <button type="button" class="action-sheet__backdrop" data-close="editorMoreSheet" aria-label="Close"></button>
+      <div class="action-sheet__panel" role="dialog" aria-label="More">
+        <button type="button" class="action-sheet__item tap-scale" data-action="find">Find</button>
+        <button type="button" class="action-sheet__item tap-scale" data-action="skin">Themes</button>
+        <button type="button" class="action-sheet__item tap-scale" data-action="move">Move</button>
+        <button type="button" class="action-sheet__item tap-scale" data-action="app-settings">Settings</button>
       </div>
     </div>
 
     <div class="action-sheet is-hidden" id="editorShareSheet" aria-hidden="true">
-      <button type="button" class="action-sheet__backdrop" data-close="editorShareSheet" aria-label="关闭"></button>
-      <div class="action-sheet__panel" role="dialog" aria-label="分享笔记">
-        <h2 class="action-sheet__title">分享笔记</h2>
-        <button type="button" class="action-sheet__item tap-scale" data-share="text">以文字形式分享</button>
-        <button type="button" class="action-sheet__item tap-scale" data-share="image">以图片形式分享</button>
-        <button type="button" class="action-sheet__item tap-scale" data-share="link">以链接形式分享</button>
-        <button type="button" class="action-sheet__item tap-scale" data-share="word">以 Word 文档分享</button>
-        <button type="button" class="action-sheet__item action-sheet__item--cancel tap-scale" data-close="editorShareSheet">取消</button>
+      <button type="button" class="action-sheet__backdrop" data-close="editorShareSheet" aria-label="Close"></button>
+      <div class="action-sheet__panel" role="dialog" aria-label="Share note">
+        <h2 class="action-sheet__title">Share note</h2>
+        <button type="button" class="action-sheet__item tap-scale" data-share="text">Share as text</button>
+        <button type="button" class="action-sheet__item tap-scale" data-share="image">Share as image</button>
+        <button type="button" class="action-sheet__item tap-scale" data-share="link">Share as link</button>
+        <button type="button" class="action-sheet__item tap-scale" data-share="word">Share as Word</button>
+        <button type="button" class="action-sheet__item action-sheet__item--cancel tap-scale" data-close="editorShareSheet">Cancel</button>
       </div>
     </div>
 
     <div class="action-sheet is-hidden" id="editorSkinSheet" aria-hidden="true">
-      <button type="button" class="action-sheet__backdrop" data-close="editorSkinSheet" aria-label="关闭"></button>
-      <div class="action-sheet__panel action-sheet__panel--skin" role="dialog" aria-label="皮肤">
+      <button type="button" class="action-sheet__backdrop" data-close="editorSkinSheet" aria-label="Close"></button>
+      <div class="action-sheet__panel action-sheet__panel--skin" role="dialog" aria-label="Themes">
         <header class="skin-sheet__head">
-          <button type="button" class="skin-sheet__done tap-scale" data-close="editorSkinSheet">完成</button>
-          <h2 class="skin-sheet__title">皮肤</h2>
+          <button type="button" class="skin-sheet__done tap-scale" data-close="editorSkinSheet">Done</button>
+          <h2 class="skin-sheet__title">Themes</h2>
         </header>
         <div class="skin-sheet__body">
-          <div class="theme-mode theme-mode--compact" id="editorThemeMode" role="group" aria-label="明暗模式">
-            <button type="button" class="theme-mode__btn tap-scale" data-theme-mode="light" aria-pressed="true">浅色</button>
-            <button type="button" class="theme-mode__btn tap-scale" data-theme-mode="dark" aria-pressed="false">深色</button>
+          <div class="theme-mode theme-mode--compact" id="editorThemeMode" role="group" aria-label="Theme mode">
+            <button type="button" class="theme-mode__btn tap-scale" data-theme-mode="light" aria-pressed="true">Light</button>
+            <button type="button" class="theme-mode__btn tap-scale" data-theme-mode="dark" aria-pressed="false">Dark</button>
           </div>
-          <div class="skin-grid" id="editorSkinGrid" aria-label="阅读配色"></div>
+          <div class="skin-grid" id="editorSkinGrid" aria-label="Reading palette"></div>
         </div>
       </div>
     </div>
 
     <div class="action-sheet is-hidden" id="editorMoveSheet" aria-hidden="true">
-      <button type="button" class="action-sheet__backdrop" data-close="editorMoveSheet" aria-label="关闭"></button>
-      <div class="action-sheet__panel" role="dialog" aria-label="移动笔记">
-        <h2 class="action-sheet__title">移动到</h2>
+      <button type="button" class="action-sheet__backdrop" data-close="editorMoveSheet" aria-label="Close"></button>
+      <div class="action-sheet__panel" role="dialog" aria-label="Move note">
+        <h2 class="action-sheet__title">Move to</h2>
         <div class="action-sheet__list" id="editorMoveList"></div>
-        <button type="button" class="action-sheet__item action-sheet__item--cancel tap-scale" data-close="editorMoveSheet">取消</button>
+        <button type="button" class="action-sheet__item action-sheet__item--cancel tap-scale" data-close="editorMoveSheet">Cancel</button>
       </div>
     </div>
   </div>
 
   <div class="action-sheet is-hidden" id="categoryManageSheet" aria-hidden="true">
-    <button type="button" class="action-sheet__backdrop" data-close="categoryManageSheet" aria-label="关闭"></button>
-    <div class="action-sheet__panel action-sheet__panel--manage" role="dialog" aria-label="管理笔记本">
-      <h2 class="action-sheet__title">管理笔记本</h2>
+    <button type="button" class="action-sheet__backdrop" data-close="categoryManageSheet" aria-label="Close"></button>
+    <div class="action-sheet__panel action-sheet__panel--manage" role="dialog" aria-label="Manage notebooks">
+      <h2 class="action-sheet__title">Manage notebooks</h2>
       <form class="category-create" id="categoryCreateForm">
-        <input id="categoryNameInput" type="text" placeholder="新笔记本名称" maxlength="32" autocomplete="off" enterkeyhint="done">
-        <button type="submit" class="btn-primary tap-scale">添加</button>
+        <input id="categoryNameInput" type="text" placeholder="New notebook name" maxlength="32" autocomplete="off" enterkeyhint="done">
+        <button type="submit" class="btn-primary tap-scale">Add</button>
       </form>
       <ul class="category-manage__list" id="categoryManageList"></ul>
-      <button type="button" class="action-sheet__item action-sheet__item--cancel tap-scale" data-close="categoryManageSheet">完成</button>
+      <button type="button" class="action-sheet__item action-sheet__item--cancel tap-scale" data-close="categoryManageSheet">Done</button>
     </div>
   </div>
 
-  <!-- 多选批量操作工具栏 -->
   <div class="multi-select-actions is-hidden" id="multiSelectActionBar">
     <button type="button" class="multi-select-actions__item tap-scale" id="batchMoveBtn">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
       </svg>
-      <span>移动</span>
+      <span>Move</span>
     </button>
     <button type="button" class="multi-select-actions__item tap-scale" id="batchPinBtn">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <line x1="12" y1="17" x2="12" y2="22"></line>
         <path d="M5 17h14v-1.76a2 2 0 0 0-.44-1.24l-2.12-2.58A2 2 0 0 1 16 10.18V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v5.18c0 .41-.12.82-.36 1.15L5.44 14a2 2 0 0 0-.44 1.24z"></path>
       </svg>
-      <span id="batchPinText">置顶</span>
+      <span id="batchPinText">Pin</span>
     </button>
     <button type="button" class="multi-select-actions__item multi-select-actions__item--danger tap-scale" id="batchDeleteBtn">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -318,82 +316,224 @@
         <line x1="10" y1="11" x2="10" y2="17"></line>
         <line x1="14" y1="11" x2="14" y2="17"></line>
       </svg>
-      <span>删除</span>
+      <span>Delete</span>
     </button>
   </div>
 
-  <!-- 批量移动笔记本 -->
   <div class="action-sheet is-hidden" id="batchMoveSheet" aria-hidden="true">
-    <button type="button" class="action-sheet__backdrop" data-close="batchMoveSheet" aria-label="关闭"></button>
-    <div class="action-sheet__panel" role="dialog" aria-label="批量移动笔记">
-      <h2 class="action-sheet__title">批量移动到</h2>
+    <button type="button" class="action-sheet__backdrop" data-close="batchMoveSheet" aria-label="Close"></button>
+    <div class="action-sheet__panel" role="dialog" aria-label="Batch move notes">
+      <h2 class="action-sheet__title">Move selected to</h2>
       <div class="action-sheet__list" id="batchMoveList"></div>
-      <button type="button" class="action-sheet__item action-sheet__item--cancel tap-scale" data-close="batchMoveSheet">取消</button>
+      <button type="button" class="action-sheet__item action-sheet__item--cancel tap-scale" data-close="batchMoveSheet">Cancel</button>
     </div>
   </div>
 
-  <!-- 右上角更多选项弹出排版菜单 -->
   <div class="popover-menu is-hidden" id="moreMenuPopover">
-    <button type="button" class="popover-menu__backdrop" id="moreMenuBackdrop" aria-label="关闭菜单"></button>
+    <button type="button" class="popover-menu__backdrop" id="moreMenuBackdrop" aria-label="Close menu"></button>
     <div class="popover-menu__panel">
       <button type="button" class="popover-menu__item tap-scale" data-action="menu-edit">
-        <span>编辑</span>
+        <span>Edit</span>
       </button>
-      
       <button type="button" class="popover-menu__item tap-scale" data-action="menu-view-mode">
-        <span id="viewModeText">宫格模式</span>
+        <span id="viewModeText">Grid mode</span>
       </button>
-
       <button type="button" class="popover-menu__item tap-scale" data-action="menu-settings">
-        <span>设置</span>
+        <span>Settings</span>
       </button>
       <button type="button" class="popover-menu__item tap-scale" data-action="menu-install">
-        <span>安装 App</span>
+        <span>Install App</span>
       </button>
-
       <div class="popover-menu__divider"></div>
-
       <button type="button" class="popover-menu__item tap-scale" data-action="menu-sort-created">
-        <span>按创建时间排序</span>
-        <span class="popover-menu__checkmark" id="sortCreatedCheck">✓</span>
+        <span>Sort by created time</span>
+        <span class="popover-menu__checkmark" id="sortCreatedCheck">v</span>
       </button>
-
       <button type="button" class="popover-menu__item tap-scale" data-action="menu-sort-modified">
-        <span>按修改时间排序</span>
-        <span class="popover-menu__checkmark" id="sortModifiedCheck">✓</span>
+        <span>Sort by modified time</span>
+        <span class="popover-menu__checkmark" id="sortModifiedCheck">v</span>
       </button>
     </div>
   </div>
 
-  <!-- 自定义确认弹窗 (Custom Confirm Modal) -->
   <div class="custom-modal is-hidden" id="customConfirmModal" aria-hidden="true">
     <div class="custom-modal__backdrop"></div>
     <div class="custom-modal__panel" role="dialog">
-      <h3 class="custom-modal__title" id="customConfirmTitle">提示</h3>
+      <h3 class="custom-modal__title" id="customConfirmTitle">Alert</h3>
       <p class="custom-modal__message" id="customConfirmMessage"></p>
       <div class="custom-modal__buttons">
-        <button type="button" class="custom-modal__btn custom-modal__btn--cancel tap-scale" id="customConfirmCancelBtn">取消</button>
-        <button type="button" class="custom-modal__btn custom-modal__btn--confirm tap-scale" id="customConfirmConfirmBtn">确定</button>
+        <button type="button" class="custom-modal__btn custom-modal__btn--cancel tap-scale" id="customConfirmCancelBtn">Cancel</button>
+        <button type="button" class="custom-modal__btn custom-modal__btn--confirm tap-scale" id="customConfirmConfirmBtn">Confirm</button>
       </div>
     </div>
   </div>
 
-  <!-- 自定义输入弹窗 (Custom Prompt Modal) -->
   <div class="custom-modal is-hidden" id="customPromptModal" aria-hidden="true">
     <div class="custom-modal__backdrop"></div>
     <div class="custom-modal__panel" role="dialog">
-      <h3 class="custom-modal__title" id="customPromptTitle">请输入</h3>
+      <h3 class="custom-modal__title" id="customPromptTitle">Input</h3>
       <div class="custom-modal__input-wrapper">
         <input type="text" class="custom-modal__input" id="customPromptInput" autocomplete="off">
       </div>
       <div class="custom-modal__buttons">
-        <button type="button" class="custom-modal__btn custom-modal__btn--cancel tap-scale" id="customPromptCancelBtn">取消</button>
-        <button type="button" class="custom-modal__btn custom-modal__btn--confirm tap-scale" id="customPromptConfirmBtn">确定</button>
+        <button type="button" class="custom-modal__btn custom-modal__btn--cancel tap-scale" id="customPromptCancelBtn">Cancel</button>
+        <button type="button" class="custom-modal__btn custom-modal__btn--confirm tap-scale" id="customPromptConfirmBtn">Confirm</button>
       </div>
     </div>
   </div>
 
+  <script>
+    (function () {
+      const setText = (selector, value) => {
+        const node = document.querySelector(selector);
+        if (node) node.textContent = value;
+      };
+      const setAttr = (selector, attr, value) => {
+        const node = document.querySelector(selector);
+        if (node) node.setAttribute(attr, value);
+      };
+      const setAllText = (selector, value) => {
+        document.querySelectorAll(selector).forEach((node) => {
+          node.textContent = value;
+        });
+      };
+
+      setText("#normalTopbar h1", "\u7b14\u8bb0");
+      setAttr("#searchToggleBtn", "aria-label", "\u641c\u7d22");
+      setAttr("#moreMenuBtn", "aria-label", "\u66f4\u591a\u9009\u9879");
+      setText("#multiSelectCancelBtn", "\u53d6\u6d88");
+      setText("#multiSelectAllBtn", "\u5168\u9009");
+      setText("#multiSelectTitle", "\u5df2\u9009\u62e9 0 \u9879");
+      setAttr("#searchInput", "placeholder", "\u641c\u7d22\u6807\u9898\u6216\u6b63\u6587...");
+      setAttr("#searchClearBtn", "aria-label", "\u6e05\u9664\u641c\u7d22");
+      setText("#searchClearBtn", "\u00d7");
+      setAttr("#categoryTabs", "aria-label", "\u5217\u8868\u7b5b\u9009");
+
+      setAttr("#settingsBackBtn", "aria-label", "\u8fd4\u56de\u7b14\u8bb0");
+      setText('.screen[data-screen="settings"] .topbar h1', "\u8bbe\u7f6e");
+      setText('.screen[data-screen="settings"] .card:nth-of-type(1) .card__title', "\u4e91\u7aef\u540c\u6b65");
+      setText('.screen[data-screen="settings"] .card:nth-of-type(1) .card__hint', "\u4f7f\u7528\u72ec\u7acb\u7684 Supabase \u9879\u76ee\uff0c\u4e0e Habit \u65e0\u5173\u3002\u542f\u7528 Anonymous \u767b\u5f55\u540e\u586b\u5165 URL \u4e0e Anon Key\u3002");
+      setText("#saveSyncBtn", "\u4fdd\u5b58\u5e76\u8fde\u63a5");
+      setText("#syncNowBtn", "\u7acb\u5373\u540c\u6b65");
+      setText("#syncStatus", "\u5c1a\u672a\u914d\u7f6e\u4e91\u7aef");
+      setText('.screen[data-screen="settings"] .card:nth-of-type(2) .card__title', "\u7b14\u8bb0\u672c");
+      setText('.screen[data-screen="settings"] .card:nth-of-type(2) .card__hint', "\u521b\u5efa\u3001\u91cd\u547d\u540d\u6216\u5220\u9664\u7b14\u8bb0\u672c\uff0c\u4e0e\u7b14\u8bb0\u5217\u8868\u9876\u680f\u540c\u6b65\u3002");
+      setText("#manageCategoriesBtn", "\u7ba1\u7406\u7b14\u8bb0\u672c");
+      setText('.appearance-card .card__title', "\u5916\u89c2");
+      setText('.appearance-card .card__hint', "\u9605\u8bfb\u914d\u8272\u4e0e\u660e\u6697\u6a21\u5f0f\uff0c\u7b14\u8bb0\u5185\u5916\u540c\u6b65\u751f\u6548\u3002");
+      setAttr("#settingsThemeMode", "aria-label", "\u660e\u6697\u6a21\u5f0f");
+      setAllText('#settingsThemeMode [data-theme-mode="light"]', "\u6d45\u8272");
+      setAllText('#settingsThemeMode [data-theme-mode="dark"]', "\u6df1\u8272");
+      setAttr("#settingsSkinGrid", "aria-label", "\u9605\u8bfb\u914d\u8272");
+      setText('.screen[data-screen="settings"] .card:nth-of-type(4) .card__title', "\u5b89\u88c5 App");
+      setText("#installHint", "\u53ef\u5c06 Note \u6dfb\u52a0\u5230\u4e3b\u5c4f\u5e55\uff0c\u83b7\u5f97\u66f4\u63a5\u8fd1\u539f\u751f\u5e94\u7528\u7684\u4f53\u9a8c\u3002");
+      setText("#installAppBtn", "\u5b89\u88c5 App");
+
+      setAttr("#fabAddBtn", "aria-label", "\u65b0\u5efa\u7b14\u8bb0");
+      setAttr(".mobile-nav", "aria-label", "\u4e3b\u5bfc\u822a");
+      setAttr('.mobile-nav__item[data-screen="notes"]', "aria-label", "\u7b14\u8bb0");
+      setText('.mobile-nav__item[data-screen="notes"] span', "\u7b14\u8bb0");
+      setAttr('.mobile-nav__item[data-screen="settings"]', "aria-label", "\u8bbe\u7f6e");
+      setText('.mobile-nav__item[data-screen="settings"] span', "\u8bbe\u7f6e");
+      setAttr("#bottomSearchInput", "placeholder", "\u641c\u7d22");
+      setAttr("#bottomAddBtn", "aria-label", "\u65b0\u5efa\u7b14\u8bb0");
+      setAttr("#bottomSettingsBtn", "aria-label", "\u8bbe\u7f6e");
+
+      setAttr("#editorBackBtn", "aria-label", "\u8fd4\u56de");
+      setAttr("#editorShareBtn", "aria-label", "\u5206\u4eab");
+      setAttr("#editorMoreBtn", "aria-label", "\u66f4\u591a");
+      setAttr("#editorDeleteBtn", "aria-label", "\u5220\u9664");
+      setAttr("#editorFindInput", "placeholder", "\u67e5\u627e\u7b14\u8bb0\u5185\u5bb9...");
+      setText("#editorFindNextBtn", "\u4e0b\u4e00\u4e2a");
+      setAttr("#editorFindCloseBtn", "aria-label", "\u5173\u95ed");
+      setText("#editorFindCloseBtn", "\u00d7");
+      setAttr("#editorToolbar", "aria-label", "\u7f16\u8f91\u5de5\u5177");
+      setAttr('[data-cmd="undo"]', "aria-label", "\u64a4\u9500");
+      setAttr('[data-cmd="redo"]', "aria-label", "\u91cd\u505a");
+      setAttr('[data-cmd="done"]', "aria-label", "\u5b8c\u6210");
+      setAttr('[data-cmd="timestamp"]', "aria-label", "\u63d2\u5165\u65f6\u95f4");
+      setAttr('[data-cmd="bullet"]', "aria-label", "\u65e0\u5e8f\u5217\u8868");
+      setAttr('[data-cmd="ordered"]', "aria-label", "\u6709\u5e8f\u5217\u8868");
+      setAttr('[data-cmd="checklist"]', "aria-label", "\u5f85\u529e\u5217\u8868");
+      setAttr('[data-cmd="bold"]', "aria-label", "\u7c97\u4f53");
+      setAttr('[data-cmd="italic"]', "aria-label", "\u659c\u4f53");
+      setAttr('[data-cmd="underline"]', "aria-label", "\u4e0b\u5212\u7ebf");
+      setAttr('[data-cmd="strike"]', "aria-label", "\u5220\u9664\u7ebf");
+      setAttr('[data-cmd="highlight"]', "aria-label", "\u9ad8\u4eae");
+      setText('[data-cmd="highlight"]', "\u9ad8\u4eae");
+      setAttr('[data-cmd="h1"]', "aria-label", "\u4e00\u7ea7\u6807\u9898");
+      setAttr('[data-cmd="h2"]', "aria-label", "\u4e8c\u7ea7\u6807\u9898");
+      setAttr('[data-cmd="quote"]', "aria-label", "\u5f15\u7528");
+      setAttr('[data-cmd="hr"]', "aria-label", "\u5206\u9694\u7ebf");
+      setAttr('[data-cmd="indent"]', "aria-label", "\u589e\u52a0\u7f29\u8fdb");
+      setAttr('[data-cmd="outdent"]', "aria-label", "\u51cf\u5c11\u7f29\u8fdb");
+      setAttr('[data-cmd="selectAll"]', "aria-label", "\u5168\u9009");
+
+      setAttr('#editorMoreSheet .action-sheet__backdrop', "aria-label", "\u5173\u95ed");
+      setAttr('#editorMoreSheet .action-sheet__panel', "aria-label", "\u66f4\u591a");
+      setText('#editorMoreSheet [data-action="find"]', "\u67e5\u627e");
+      setText('#editorMoreSheet [data-action="skin"]', "\u76ae\u80a4");
+      setText('#editorMoreSheet [data-action="move"]', "\u79fb\u52a8");
+      setText('#editorMoreSheet [data-action="app-settings"]', "\u8bbe\u7f6e");
+
+      setAttr('#editorShareSheet .action-sheet__backdrop', "aria-label", "\u5173\u95ed");
+      setAttr('#editorShareSheet .action-sheet__panel', "aria-label", "\u5206\u4eab\u7b14\u8bb0");
+      setText('#editorShareSheet .action-sheet__title', "\u5206\u4eab\u7b14\u8bb0");
+      setText('#editorShareSheet [data-share="text"]', "\u4ee5\u6587\u5b57\u5f62\u5f0f\u5206\u4eab");
+      setText('#editorShareSheet [data-share="image"]', "\u4ee5\u56fe\u7247\u5f62\u5f0f\u5206\u4eab");
+      setText('#editorShareSheet [data-share="link"]', "\u4ee5\u94fe\u63a5\u5f62\u5f0f\u5206\u4eab");
+      setText('#editorShareSheet [data-share="word"]', "\u4ee5 Word \u6587\u6863\u5206\u4eab");
+      setText('#editorShareSheet [data-close="editorShareSheet"]', "\u53d6\u6d88");
+
+      setAttr('#editorSkinSheet .action-sheet__backdrop', "aria-label", "\u5173\u95ed");
+      setAttr('#editorSkinSheet .action-sheet__panel', "aria-label", "\u76ae\u80a4");
+      setText('#editorSkinSheet .skin-sheet__done', "\u5b8c\u6210");
+      setText('#editorSkinSheet .skin-sheet__title', "\u76ae\u80a4");
+      setAttr("#editorThemeMode", "aria-label", "\u660e\u6697\u6a21\u5f0f");
+      setAllText('#editorThemeMode [data-theme-mode="light"]', "\u6d45\u8272");
+      setAllText('#editorThemeMode [data-theme-mode="dark"]', "\u6df1\u8272");
+      setAttr("#editorSkinGrid", "aria-label", "\u9605\u8bfb\u914d\u8272");
+
+      setAttr('#editorMoveSheet .action-sheet__backdrop', "aria-label", "\u5173\u95ed");
+      setAttr('#editorMoveSheet .action-sheet__panel', "aria-label", "\u79fb\u52a8\u7b14\u8bb0");
+      setText('#editorMoveSheet .action-sheet__title', "\u79fb\u52a8\u5230");
+      setText('#editorMoveSheet [data-close="editorMoveSheet"]', "\u53d6\u6d88");
+
+      setAttr('#categoryManageSheet .action-sheet__backdrop', "aria-label", "\u5173\u95ed");
+      setAttr('#categoryManageSheet .action-sheet__panel', "aria-label", "\u7ba1\u7406\u7b14\u8bb0\u672c");
+      setText('#categoryManageSheet .action-sheet__title', "\u7ba1\u7406\u7b14\u8bb0\u672c");
+      setAttr("#categoryNameInput", "placeholder", "\u65b0\u7b14\u8bb0\u672c\u540d\u79f0");
+      setText('#categoryCreateForm button[type="submit"]', "\u6dfb\u52a0");
+      setText('#categoryManageSheet [data-close="categoryManageSheet"]', "\u5b8c\u6210");
+
+      setText("#batchMoveBtn span", "\u79fb\u52a8");
+      setText("#batchPinText", "\u7f6e\u9876");
+      setText("#batchDeleteBtn span", "\u5220\u9664");
+      setAttr('#batchMoveSheet .action-sheet__backdrop', "aria-label", "\u5173\u95ed");
+      setAttr('#batchMoveSheet .action-sheet__panel', "aria-label", "\u6279\u91cf\u79fb\u52a8\u7b14\u8bb0");
+      setText('#batchMoveSheet .action-sheet__title', "\u6279\u91cf\u79fb\u52a8\u5230");
+      setText('#batchMoveSheet [data-close="batchMoveSheet"]', "\u53d6\u6d88");
+
+      setAttr("#moreMenuBackdrop", "aria-label", "\u5173\u95ed\u83dc\u5355");
+      setText('#moreMenuPopover [data-action="menu-edit"] span', "\u7f16\u8f91");
+      setText("#viewModeText", "\u5bab\u683c\u6a21\u5f0f");
+      setText('#moreMenuPopover [data-action="menu-settings"] span', "\u8bbe\u7f6e");
+      setText('#moreMenuPopover [data-action="menu-install"] span', "\u5b89\u88c5 App");
+      setText('#moreMenuPopover [data-action="menu-sort-created"] span:first-child', "\u6309\u521b\u5efa\u65f6\u95f4\u6392\u5e8f");
+      setText('#moreMenuPopover [data-action="menu-sort-modified"] span:first-child', "\u6309\u4fee\u6539\u65f6\u95f4\u6392\u5e8f");
+      setText("#sortCreatedCheck", "\u2713");
+      setText("#sortModifiedCheck", "\u2713");
+
+      setText("#customConfirmTitle", "\u63d0\u793a");
+      setText("#customConfirmCancelBtn", "\u53d6\u6d88");
+      setText("#customConfirmConfirmBtn", "\u786e\u5b9a");
+      setText("#customPromptTitle", "\u8bf7\u8f93\u5165");
+      setText("#customPromptCancelBtn", "\u53d6\u6d88");
+      setText("#customPromptConfirmBtn", "\u786e\u5b9a");
+    })();
+  </script>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script type="module" src="app.js?v=16"></script>
+  <script type="module" src="app.js?v=17"></script>
 </body>
 </html>

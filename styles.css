@@ -166,18 +166,23 @@ body.editor-open .app-shell {
 
 .screen[data-screen="settings"] .topbar {
   justify-content: flex-start;
-  gap: 10px;
-  margin-top: -2px;
+  align-items: center;
+  gap: 12px;
+  margin-top: 0;
+  margin-bottom: 18px;
 }
 
 .screen[data-screen="settings"] .topbar__copy {
   display: flex;
   align-items: center;
+  min-height: 42px;
+  padding-top: 1px;
 }
 
 .screen[data-screen="settings"] .topbar h1 {
-  font-size: 1.5rem;
-  line-height: 1.15;
+  font-size: 1.48rem;
+  line-height: 1.08;
+  letter-spacing: -0.018em;
 }
 
 body[data-screen="settings"] .mobile-nav {
@@ -437,14 +442,14 @@ body[data-screen="settings"] .mobile-nav {
 .entry-list {
   display: grid;
   gap: 10px;
-  padding-bottom: calc(208px + var(--safe-bottom));
+  padding-bottom: calc(224px + var(--safe-bottom));
   margin-bottom: 0;
 }
 
 .entry-list::after {
   content: "";
   display: block;
-  height: 24px;
+  height: 34px;
 }
 
 .entry-card {
@@ -808,9 +813,9 @@ body.editor-open .mobile-nav {
 .mobile-nav {
   position: fixed;
   left: 50%;
-  bottom: calc(var(--safe-bottom) + 6px);
+  bottom: calc(var(--safe-bottom) + 8px);
   transform: translateX(-50%);
-  width: min(560px, calc(100% - 32px));
+  width: min(560px, calc(100% - 28px));
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4px;
@@ -2208,11 +2213,12 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 10px;
-  border-radius: 24px;
-  background: color-mix(in srgb, var(--surface) 94%, transparent);
-  backdrop-filter: saturate(140%) blur(10px);
-  -webkit-backdrop-filter: saturate(140%) blur(10px);
+  min-height: 64px;
+  padding: 10px 12px;
+  border-radius: 26px;
+  background: color-mix(in srgb, var(--surface) 95%, transparent);
+  backdrop-filter: saturate(150%) blur(12px);
+  -webkit-backdrop-filter: saturate(150%) blur(12px);
   justify-content: space-between;
 }
 
@@ -2223,12 +2229,12 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
 .mobile-nav__search {
   flex: 0 1 calc(100% - 136px);
   min-width: 0;
-  height: 42px;
+  height: 44px;
   border-radius: 999px;
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 0 12px 0 10px;
+  gap: 8px;
+  padding: 0 14px 0 12px;
   background: color-mix(in srgb, var(--surface) 86%, var(--bg));
   color: var(--muted);
 }
@@ -2241,7 +2247,7 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
   outline: none;
   color: var(--text);
   font-size: 15px;
-  line-height: 42px;
+  line-height: 1.1;
   padding: 0;
   margin: 0;
   text-indent: 0;
@@ -2250,9 +2256,9 @@ body[data-multiselect="true"] .entry-card.is-swiped .entry-card__inner {
 }
 
 .mobile-nav__action {
-  flex: 0 0 42px;
-  width: 42px;
-  height: 42px;
+  flex: 0 0 44px;
+  width: 44px;
+  height: 44px;
   border-radius: 999px;
   border: 0;
   display: grid;
@@ -2909,19 +2915,19 @@ html[data-skin="blue"][data-theme="dark"] {
 .entry-list.is-grid .entry-card {
   border-radius: 16px;
   box-shadow: var(--shadow);
-  min-height: 128px;
+  min-height: 136px;
 }
 
 .entry-list.is-grid .entry-card__inner {
-  min-height: 128px;
-  padding: 16px;
+  min-height: 136px;
+  padding: 16px 16px 15px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
 }
 
 .entry-list.is-grid .entry-card__title {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   font-size: 16px;
   line-height: 1.36;
   max-height: calc(1.36em * 2);
@@ -2937,11 +2943,13 @@ html[data-skin="blue"][data-theme="dark"] {
   display: block;
   font-size: 13px;
   line-height: 1.36;
+  margin-top: auto;
 }
 
 .entry-list.is-grid .entry-card__meta--compact .entry-card__time {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 7px;
+  opacity: 0.92;
 }
 
 .entry-list.is-grid .entry-card__meta--compact .entry-card__preview {
@@ -2951,7 +2959,7 @@ html[data-skin="blue"][data-theme="dark"] {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   overflow: hidden;
-  line-height: 1.36;
+  line-height: 1.42;
   overflow-wrap: anywhere;
   word-break: break-word;
 }
