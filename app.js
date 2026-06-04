@@ -1978,5 +1978,5 @@ bootstrap().catch((error) => {
   console.error(error);
   showToast("启动失败，请刷新页面");
 });
-    const swipeWidth = inTrash ? 112 : 162;
+    const swipeWidth = inTrash ? 160 : 162;
     card.style.setProperty("--swipe-width", `${swipeWidth}px`);

@@ -599,19 +599,23 @@ body[data-screen="settings"] .mobile-nav {
   background: #c86a60;
 }
 
+.entry-card[data-trash="true"] .entry-card__actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.entry-card[data-trash="true"] .entry-card__action {
+  width: 100%;
+  min-width: 0;
+  flex: none;
+}
+
 .entry-card__action--restore {
-  width: auto;
-  flex: 1 1 50%;
   background: #8f7755;
 }
 
 .entry-card[data-trash="true"] .entry-card__action--delete {
-  width: auto;
-  flex: 1 1 50%;
-}
-
-.entry-card[data-trash="true"] .entry-card__action {
-  flex: 1 1 50%;
+  background: #c86a60;
 }
 
 .entry-card.is-swiped .entry-card__inner {
