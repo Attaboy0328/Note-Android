@@ -114,7 +114,111 @@ function isIosSafari() {
   return /iphone|ipad|ipod/.test(ua) && /safari/.test(ua) && !/crios|fxios|edgios/.test(ua);
 }
 
-function updateInstallUI() {
+function getInstallContext() {
+  const ua = window.navigator.userAgent.toLowerCase();
+  const isIos = /iphone|ipad|ipod/.test(ua);
+  const isAndroid = /android/.test(ua);
+  const isDesktop = !isIos && !isAndroid;
+
+  let browser = "browser";
+  let browserLabel = "\u5f53\u524d\u6d4f\u89c8\u5668";
+
+  if (/edg\//.test(ua) || /edgios/.test(ua)) {
+    browser = "edge";
+    browserLabel = "Edge";
+  } else if (/samsungbrowser/.test(ua)) {
+    browser = "samsung";
+    browserLabel = "\u4e09\u661f\u6d4f\u89c8\u5668";
+  } else if (/firefox\//.test(ua) || /fxios/.test(ua)) {
+    browser = "firefox";
+    browserLabel = "Firefox";
+  } else if (/opr\//.test(ua) || /opera/.test(ua)) {
+    browser = "opera";
+    browserLabel = "Opera";
+  } else if (/vivaldi/.test(ua)) {
+    browser = "vivaldi";
+    browserLabel = "Vivaldi";
+  } else if (/brave/.test(ua)) {
+    browser = "brave";
+    browserLabel = "Brave";
+  } else if (/chrome\//.test(ua) || /crios/.test(ua)) {
+    browser = "chrome";
+    browserLabel = "Chrome";
+  } else if (/safari/.test(ua)) {
+    browser = "safari";
+    browserLabel = "Safari";
+  }
+
+  return { isIos, isAndroid, isDesktop, browser, browserLabel };
+}
+
+function getInstallGuide() {
+  if (isIosStandalone()) {
+    return {
+      disabled: true,
+      mode: "installed",
+      hint: "\u5df2\u5b89\u88c5\u5230\u4e3b\u5c4f\u5e55\u3002",
+      message: ""
+    };
+  }
+
+  if (deferredInstallPrompt) {
+    return {
+      disabled: false,
+      mode: "prompt",
+      hint: "\u70b9\u51fb\u5373\u53ef\u8c03\u8d77\u7cfb\u7edf\u5b89\u88c5\u5f39\u7a97\u3002",
+      message: ""
+    };
+  }
+
+  const context = getInstallContext();
+
+  if (context.isIos) {
+    if (context.browser === "safari") {
+      return {
+        disabled: false,
+        mode: "manual",
+        hint: "\u70b9\u51fb\u67e5\u770b Safari \u7684\u5b89\u88c5\u65b9\u5f0f\u3002",
+        message: "\u5728 Safari \u4e2d\u70b9\u5e95\u90e8\u6216\u9876\u90e8\u7684\u201c\u5206\u4eab\u201d\uff0c\u518d\u9009\u201c\u6dfb\u52a0\u5230\u4e3b\u5c4f\u5e55\u201d\u3002"
+      };
+    }
+
+    return {
+      disabled: false,
+      mode: "manual",
+      hint: "\u70b9\u51fb\u67e5\u770b\u5f53\u524d iPhone \u6d4f\u89c8\u5668\u7684\u5b89\u88c5\u65b9\u5f0f\u3002",
+      message: `${context.browserLabel} \u5bf9 PWA \u5b89\u88c5\u7684\u652f\u6301\u4e0d\u5b8c\u5168\u4e00\u81f4\u3002\u8bf7\u5148\u5728\u6d4f\u89c8\u5668\u83dc\u5355\u91cc\u5c1d\u8bd5\u201c\u6dfb\u52a0\u5230\u4e3b\u5c4f\u5e55\u201d\uff1b\u5982\u679c\u6ca1\u6709\u8fd9\u4e2a\u5165\u53e3\uff0c\u8bf7\u5728 Safari \u4e2d\u6253\u5f00\u672c\u9875\uff0c\u518d\u901a\u8fc7\u201c\u5206\u4eab > \u6dfb\u52a0\u5230\u4e3b\u5c4f\u5e55\u201d\u5b89\u88c5\u3002`
+    };
+  }
+
+  if (context.isAndroid) {
+    const browserMessages = {
+      edge: "Edge \uff1a\u6253\u5f00\u83dc\u5355\uff0c\u8fdb\u5165\u201cApps\u201d\uff0c\u518d\u9009\u201cInstall this site as an app\u201d\u3002",
+      samsung: "\u4e09\u661f\u6d4f\u89c8\u5668\uff1a\u6253\u5f00\u83dc\u5355\uff0c\u67e5\u627e\u201c\u6dfb\u52a0\u9875\u9762\u81f3\u201d\u6216\u201c\u5b89\u88c5 App\u201d\uff0c\u518d\u9009\u4e3b\u5c4f\u5e55\u6216 Apps \u5c4f\u5e55\u3002",
+      firefox: "Firefox \uff1a\u6253\u5f00\u53f3\u4e0a\u89d2\u83dc\u5355\uff0c\u67e5\u627e\u201c\u5b89\u88c5\u201d\u6216\u201c\u6dfb\u52a0\u5230\u4e3b\u5c4f\u5e55\u201d\u3002",
+      opera: "Opera \uff1a\u6253\u5f00\u83dc\u5355\uff0c\u67e5\u627e\u201c\u5b89\u88c5 App\u201d\u6216\u201c\u6dfb\u52a0\u5230\u4e3b\u5c4f\u5e55\u201d\u3002",
+      vivaldi: "Vivaldi \uff1a\u6253\u5f00\u83dc\u5355\uff0c\u9009\u62e9\u201c\u5b89\u88c5 App\u201d\u6216\u201c\u6dfb\u52a0\u5230\u4e3b\u5c4f\u5e55\u201d\u3002",
+      brave: "Brave \uff1a\u6253\u5f00\u53f3\u4e0a\u89d2\u83dc\u5355\uff0c\u9009\u62e9\u201c\u5b89\u88c5 App\u201d\u6216\u201c\u6dfb\u52a0\u5230\u4e3b\u5c4f\u5e55\u201d\u3002",
+      chrome: "Chrome \uff1a\u6253\u5f00\u53f3\u4e0a\u89d2\u83dc\u5355\uff0c\u9009\u62e9\u201c\u5b89\u88c5 App\u201d\u6216\u201c\u6dfb\u52a0\u5230\u4e3b\u5c4f\u5e55\u201d\u3002"
+    };
+
+    return {
+      disabled: false,
+      mode: "manual",
+      hint: "\u70b9\u51fb\u67e5\u770b\u5f53\u524d\u6d4f\u89c8\u5668\u7684\u5b89\u88c5\u6b65\u9aa4\u3002",
+      message: browserMessages[context.browser] || `${context.browserLabel}\uff1a\u8bf7\u6253\u5f00\u6d4f\u89c8\u5668\u83dc\u5355\uff0c\u67e5\u627e\u201c\u5b89\u88c5 App\u201d\u3001\u201cInstall app\u201d\u6216\u201c\u6dfb\u52a0\u5230\u4e3b\u5c4f\u5e55\u201d\u3002`
+    };
+  }
+
+  return {
+    disabled: false,
+    mode: "manual",
+    hint: "\u70b9\u51fb\u67e5\u770b\u684c\u9762\u6d4f\u89c8\u5668\u7684\u5b89\u88c5\u65b9\u5f0f\u3002",
+    message: "\u8bf7\u4f18\u5148\u67e5\u627e\u5730\u5740\u680f\u53f3\u4fa7\u7684\u5b89\u88c5\u56fe\u6807\uff1b\u5982\u679c\u6ca1\u6709\uff0c\u8bf7\u5728\u6d4f\u89c8\u5668\u83dc\u5355\u4e2d\u67e5\u627e\u201c\u5b89\u88c5 App\u201d\u3001\u201cInstall this site as an app\u201d\u6216\u201c\u521b\u5efa\u5feb\u6377\u65b9\u5f0f\u201d\u3002"
+  };
+}
+
+function legacyUpdateInstallUI() {
   if (!ui.installAppBtn || !ui.installHint) return;
   if (isIosStandalone()) {
     ui.installAppBtn.disabled = true;
@@ -135,7 +239,7 @@ function updateInstallUI() {
   ui.installHint.textContent = "当前环境暂不支持直接安装，请使用 Chrome 并打开 HTTPS 页面。";
 }
 
-async function triggerInstallFlow() {
+async function legacyTriggerInstallFlow() {
   if (deferredInstallPrompt) {
     deferredInstallPrompt.prompt();
     const choice = await deferredInstallPrompt.userChoice;
@@ -149,6 +253,33 @@ async function triggerInstallFlow() {
     return;
   }
   showToast("当前环境暂不可安装");
+}
+
+function updateInstallUI() {
+  if (!ui.installAppBtn || !ui.installHint) return;
+  const guide = getInstallGuide();
+  ui.installAppBtn.disabled = guide.disabled;
+  ui.installHint.textContent = guide.hint;
+}
+
+async function triggerInstallFlow() {
+  const guide = getInstallGuide();
+
+  if (guide.mode === "prompt" && deferredInstallPrompt) {
+    deferredInstallPrompt.prompt();
+    const choice = await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    updateInstallUI();
+    showToast(choice?.outcome === "accepted" ? "\u5df2\u53d1\u8d77\u5b89\u88c5" : "\u5df2\u53d6\u6d88\u5b89\u88c5");
+    return;
+  }
+
+  if (guide.mode === "manual" && guide.message) {
+    await showCustomConfirm("\u5b89\u88c5 App", guide.message);
+    return;
+  }
+
+  showToast("\u5f53\u524d\u73af\u5883\u6682\u4e0d\u53ef\u5b89\u88c5");
 }
 
 function setupEditorToolbarExperience() {
