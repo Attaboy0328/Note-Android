@@ -1,4 +1,4 @@
-const CACHE_NAME = "note-pwa-v16";
+const CACHE_NAME = "note-pwa-v18";
 
 const BASE = new URL("./", self.location).href;
 
